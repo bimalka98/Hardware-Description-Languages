@@ -216,6 +216,9 @@ time              fs, ps, ns. us, ms
 ```
 
 ## FPGA logic cell
+
+
+![FPGA logic cell](https://upload.wikimedia.org/wikipedia/commons/1/1c/FPGA_cell_example.png)
 logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
