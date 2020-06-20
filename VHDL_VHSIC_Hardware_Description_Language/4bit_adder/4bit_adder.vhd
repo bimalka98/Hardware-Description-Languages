@@ -8,7 +8,8 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_unsigned.all;
 
 -- Entity declaration
-entity Add4 is 
+
+entity Add4 is
 
 port (	Data1, Data2  : 	in std_logic_vector(3 downto 0);
   	Cin           : 	in std_logic;
@@ -19,6 +20,7 @@ port (	Data1, Data2  : 	in std_logic_vector(3 downto 0);
 end entity Add4;
 
 -- architecture
+-- defined here
 
 architecture RTL of Add4 is
     signal out5bit : std_logic_vector(4 downto 0);
