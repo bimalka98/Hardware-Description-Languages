@@ -4,11 +4,10 @@
 -- 4- bit adder
 
 library ieee;
-
 use ieee.std_logic_1164.all;
-
 use ieee.std_logic_unsigned.all;
 
+-- Entity declaration
 entity Add4 is 
 
 port (	Data1, Data2  : 	in std_logic_vector(3 downto 0);

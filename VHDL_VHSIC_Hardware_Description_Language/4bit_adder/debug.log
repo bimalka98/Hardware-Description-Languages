@@ -10,3 +10,5 @@
 [0620/141853:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
 [0620/141858:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
 [0620/141903:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0620/150935:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.
+[0620/150940:WARNING:dns_config_service_win.cc(665)] Failed to read DnsConfig.

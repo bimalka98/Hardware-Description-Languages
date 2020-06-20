@@ -5,3 +5,9 @@
 # Whitelist the file you're interested in.
 !*.vhd
 !*.png
+
+*.mpf
+*.vhdPreview
+*.cr.mti
+*.log
+*_info
