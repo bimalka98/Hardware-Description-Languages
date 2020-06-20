@@ -1,4 +1,6 @@
-
+-- First Project in modelsim
+-- 20.06.2020
+-- copied
 -- 4- bit adder
 
 library ieee;

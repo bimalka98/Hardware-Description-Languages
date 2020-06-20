@@ -1,1 +1,11 @@
+C:/Users/ASUS/Desktop/GitRepos/Digital-Designs-with-FPGA/VHDL_VHSIC_Hardware_Description_Language/4bit_adder/4bit_adder.vhd {1 {vcom -work work -2002 -explicit -stats=none {C:\Users\ASUS\Desktop\GitRepos\Digital-Designs-with-FPGA\VHDL_VHSIC_Hardware_Description_Language\4bit_adder\4bit_adder.vhd}
+Model Technology ModelSim - Intel FPGA Edition vcom 10.5b Compiler 2016.10 Oct  5 2016
+-- Loading package STANDARD
+-- Loading package TEXTIO
+-- Loading package std_logic_1164
+-- Loading package std_logic_arith
+-- Loading package STD_LOGIC_UNSIGNED
+-- Compiling entity Add4
+-- Compiling architecture RTL of Add4
 
+} {} {}}
