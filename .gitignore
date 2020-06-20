@@ -92,6 +92,8 @@ Project\ Outputs*/
 *.html
 *.bsf
 *.mpf
+*.vhdPreview
+*_info
 
 # ignore simulation output of ModelSim
 wlf*
