@@ -12,7 +12,12 @@ Hardware Description Languages are used to describe digital systems.
 # WEEK ONE
 
 ## VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
+
 * A more structured Language( with Entity and Architecture) than verilog
+* Not case sensitive
+* No indentation rules
+* Every statement ends with a semicolon(;)
+* comments are represented by `-- <comment here>`
 * Faster than schematic  capture
 * Language Based therefore designs created earlier can be reused. Designs created year back can be reused.
 
@@ -20,19 +25,40 @@ VHDL design file has three parts,
 
 1. Standard logic Definition IEEE (IEEE_std_logic_1164)
 
-2. Entity (Interface)---->(input, output)
+* IEEE.std_logic_1164 library contains definitions for logical functions(and, or, not,...) and standard types and so on.
+* std_ulogic has 9 different value settings and when a variable is declared as std_ulogic it may take any of these 9 values.
+* Default value for std_ulogic is the left most value i.e. 'U'.
+```
+-------------------------------------------------------------------
+type STD_ULOGIC is ( 'U',             -- Uninitialized
+                     'X',             -- Forcing  Unknown
+                     '0',             -- Forcing  0
+                     '1',             -- Forcing  1
+                     'Z',             -- High Impedance
+                     'W',             -- Weak     Unknown
+                     'L',             -- Weak     0
+                     'H',             -- Weak     1
+                     '-'              -- Don't care
+                     );
+-------------------------------------------------------------------
+```
+
+2. Entity
+
+* Interface with the outside world
+* Input, output, inout (bidirectional) ports
+* A Port can be `std_logic_vector(3 downto 0)`(bus, bundle)/ `std_logic(bit)`/ `unsigned(127 downto 0)`
+
 
 3. Architecture (Design  implementation)
 
-```
--- (VHDL comment)
 
-```
+### A simple AND gate implementation in VHDL.
 ```
 -- Import std_logic library
 
 library IEEE;
-use IEEE_std_logic_1164.all;
+use IEEE.std_logic_1164.all;
 
 -- Entity
 
@@ -52,6 +78,7 @@ architecture  RTL of ANDGATE is
 begin
 Y <= A AND B;
 end architecture RTL;
+
 ```
 Gates are synthesized form the description of VHDL
 
@@ -64,7 +91,7 @@ Consider four bit comparator. For all the modeling types the `Standard logic Def
 -- Use standard IEEE library
 
 library IEEE;
-use IEEE_std_logic_1164.all;
+use IEEE.std_logic_1164.all;
 
 -- Entity
 
