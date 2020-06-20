@@ -8,3 +8,46 @@ z2
 !i10f 100
 cModel Technology
 dC:/intelFPGA_lite/17.1
+Eadd4
+Z0 w1592644393
+Z1 DPx4 ieee 15 std_logic_arith 0 22 [G314=:2zXJ`VORJe1J@Z1
+Z2 DPx4 ieee 18 std_logic_unsigned 0 22 ;eZjO2D4ZDz<]0>8AL<ne1
+Z3 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z4 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z5 dC:/Users/ASUS/Desktop/GitRepos/Digital-Designs-with-FPGA/VHDL_VHSIC_Hardware_Description_Language/4bit_adder
+Z6 8C:\Users\ASUS\Desktop\GitRepos\Digital-Designs-with-FPGA\VHDL_VHSIC_Hardware_Description_Language\4bit_adder\4bit_adder.vhd
+Z7 FC:\Users\ASUS\Desktop\GitRepos\Digital-Designs-with-FPGA\VHDL_VHSIC_Hardware_Description_Language\4bit_adder\4bit_adder.vhd
+l0
+L10
+Vjf]2h7MSgg@10j8IFHbN>3
+!s100 EYBN?6BAaMWBLV`=9cA8j3
+Z8 OV;C;10.5b;63
+32
+Z9 !s110 1592644425
+!i10b 1
+Z10 !s108 1592644425.000000
+Z11 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|C:\Users\ASUS\Desktop\GitRepos\Digital-Designs-with-FPGA\VHDL_VHSIC_Hardware_Description_Language\4bit_adder\4bit_adder.vhd|
+Z12 !s107 C:\Users\ASUS\Desktop\GitRepos\Digital-Designs-with-FPGA\VHDL_VHSIC_Hardware_Description_Language\4bit_adder\4bit_adder.vhd|
+!i113 1
+Z13 o-work work -2002 -explicit
+Z14 tExplicit 1 CvgOpt 0
+Artl
+R1
+R2
+R3
+R4
+Z15 DEx4 work 4 add4 0 22 jf]2h7MSgg@10j8IFHbN>3
+l24
+L22
+Z16 VSmNR0[^S?d5R8WWAGE?KY3
+Z17 !s100 =N;lGzdN`OYU9h1LBJ?Jz0
+R8
+32
+R9
+!i10b 1
+R10
+R11
+R12
+!i113 1
+R13
+R14
