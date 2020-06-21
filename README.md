@@ -14,14 +14,91 @@ Hardware Description Languages are used to describe digital systems.
 ## VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
 
 * A more structured Language( with Entity and Architecture) than verilog
-* Not case sensitive
-* No indentation rules
-* Every statement ends with a semicolon(;)
-* comments are represented by `-- <comment here>`
+* VHDL is not case sensitive
+* VHDL is not sensitive to white space (spaces and tabs)
+* Every statement ends with a semicolon(`statement;`)
+* comments are represented by `-- <comment here>`and no block-type comments.
+* No strict requirement of parentheses.
 * Faster than schematic  capture
 * Language Based therefore designs created earlier can be reused. Designs created year back can be reused.
 
-VHDL design file has three parts,
+## VHDL Assignments, Operators, Types
+
+### VHDL assignments, signals, and variables.
+
+#### Signals assignment operators (<=)
+* signals wire to the entity: std_logic
+* Scheduled update
+```
+Z <= A AND B;
+Z <= D after 5ns; is a simulation
+```
+
+#### Variables (:=)
+* Variable only within the process: integrated
+* Immediate update   
+```
+count := count +1; --simulation loop counter
+a :=27; variable assignment
+```
+variable updates immediately and does not need to wait for an event like a clock edge in the process.
+
+### Operators such as adders, subtractors, multipliers
+
+```
+-- many of these are synthesized in to gates
+
+**      exponent
+abs     absolute value
+not     complement
++ -     add/ subtract
+*       multiply
+/       divide
+mod     modulo
+rem     remainder
+srl , sll     shift right/ left
+rol , ror     rotate left/ right
+=       equal
+/=      not equal
+<, <=, > , >=  greater, greater than or equal...
+and , or , nand , nor , xor , xnor logical operators
+```
+
+#### Order Precedence
+
+1. Left to right,  Parenthesis
+
+2. Unary Single operand on right (mod A)
+
+3. Binary operators on both sides (A + B)
+
+##### Data Types
+* Array
+
+```
+string              "abc"
+bit_vector          "1010"
+std_logic_vector    "101Z"
+
+```
+
+* Scalar
+
+```
+character         'a'
+bit               '1' '0'
+std_logic         '1', '0', 'X', 'Z'
+Boolean           true, false
+real, integer     3.87 ,1E+5, 4
+time              fs, ps, ns. us, ms  
+```
+
+## if, elseif, end if, case, end case, loop, end loop. 
+
+
+
+
+## VHDL design file has three parts,
 
 1. Standard logic Definition IEEE (IEEE_std_logic_1164)
 
@@ -171,76 +248,7 @@ begin
   end process compareProcess;
 end behavioral;
 ```
-## VHDL Assignments, Operators, Types
 
-### VHDL assignments, signals, and variables.
-
-#### Signals assignment operators (<=)
-* signals wire to the entity: std_logic
-* Scheduled update
-```
-Z <= A AND B;
-Z <= D after 5ns; is a simulation
-```
-
-#### Variables (:=)
-* Variable only within the process: integrated
-* Immediate update   
-```
-count := count +1; --simulation loop counter
-a :=27; variable assignment
-```
-variable updates immediately and does not need to wait for an event like a clock edge in the process.
-
-### Operators such as adders, subtractors, multipliers
-
-```
--- many of these are synthesized in to gates
-
-**      exponent
-abs     absolute value
-not     complement
-+ -     add/ subtract
-*       multiply
-/       divide
-mod     modulo
-rem     remainder
-srl , sll     shift right/ left
-rol , ror     rotate left/ right
-=       equal
-/=      not equal
-<, <=, > , >=  greater, greater than or equal...
-and , or , nand , nor , xor , xnor logical operators
-```
-
-#### Order Precedence
-
-1. Left to right,  Parenthesis
-
-2. Unary Single operand on right (mod A)
-
-3. Binary operators on both sides (A + B)
-
-##### Data Types
-* Array
-
-```
-string              "abc"
-bit_vector          "1010"
-std_logic_vector    "101Z"
-
-```
-
-* Scalar
-
-```
-character         'a'
-bit               '1' '0'
-std_logic         '1', '0', 'X', 'Z'
-Boolean           true, false
-real, integer     3.87 ,1E+5, 4
-time              fs, ps, ns. us, ms  
-```
 
 ## FPGA logic cell
 
