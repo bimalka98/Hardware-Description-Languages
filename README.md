@@ -39,20 +39,25 @@ until    use      variable wait     while     with
 
 #### VHDL assignments, signals, and variables.
 
+In VHDL there are several objects types. As `signal`(to represent a wire), `variable`(to store local information), `constant`(to represent a constant)
+
 ##### Signals assignment operators (<=)
-* signals wire to the entity: std_logic
-* Scheduled update
+* signals wire to the entity
+* Scheduled update (needs some time to update to the new value after the operator is executed.)
+* To assign new value to a signal type object this operator is used.
 ```
 Z <= A AND B;
 Z <= D after 5ns; is a simulation
 ```
 
 ##### Variables (:=)
-* Variable only within the process: integrated
-* Immediate update   
+
+* Variable only within the `process construct`(what is inside the process construct is executed top to bottom sequentially, NOT concurrently)
+* Immediate update(right after the operator is executed new value take place.)
+* to assign new value to a variable type object this operator is used.
 ```
-count := count +1; --simulation loop counter
-a :=27; variable assignment
+count   := count +1;  -- simulation loop counter
+a       := 27;         -- variable assignment
 ```
 variable updates immediately and does not need to wait for an event like a clock edge in the process.
 
@@ -136,11 +141,18 @@ type STD_ULOGIC is ( 'U',             -- Uninitialized
 2. Entity
 
 * Interface with the outside world
-* Input, output, inout (bidirectional) ports are named as `in`, `out` and `inout`
-* The types of data that will be handled by `port` can be `std_logic_vector(i downto 0)`-->(bundle- a set of similar signals)/ `std_logic(bit)`--->(Single signal)/ `unsigned(127 downto 0)`
+* Input, output, inout (bidirectional) ports may have one of the modes from `in`, `out` and `inout`
+* The types of data that will be handled by `port` can be,
+
+ `std_logic_vector(i downto 0)`-->(bundle- a set of similar signals)[`i downto 0` ===> MSB is at the left of the signal/ `0 to i` ===> MSB is at the right of the signal]
+
+ `std_logic(bit)`--->(Single signal)/
+
+ `unsigned(127 downto 0)`
 
 3. Architecture (Design  implementation)
 
+This can be achieved in four different ways and they are explained below.
 
 ### A simple AND gate implementation in VHDL.
 ```
@@ -162,10 +174,10 @@ end AND_Gate; --VHDL is not case sensitive. Therefore AND_GATE is the same as AN
 
 -- Architecture
 
-architecture  RTL of ANDGATE is
+architecture  RTL of AND_Gate is
 begin
 Y <= A AND B;
-end architecture RTL;
+end RTL;
 
 ```
 Gates are synthesized form the description of VHDL
@@ -259,7 +271,9 @@ begin
   end process compareProcess;
 end behavioral;
 ```
+### 4. Hybrid modeling
 
+A combination of the above three models is used to implement this.
 
 ## FPGA logic cell
 
