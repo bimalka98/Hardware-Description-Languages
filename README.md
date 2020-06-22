@@ -19,14 +19,27 @@ Hardware Description Languages are used to describe digital systems.
 * Every statement ends with a semicolon(`statement;`)
 * comments are represented by `-- <comment here>`and no block-type comments.
 * No strict requirement of parentheses.
-* Faster than schematic  capture
+* Identifiers in VHDL are variable names, signal names and port names. And can only contain letters(a-z), numbers(0-9), underscores(-). Can only starts with a letter and can not contain 2 consecutive underscores and also can not end with an underscore.
+* Some of the Reserved words are as follows.
+
+```
+access   after    alias    all      attribute block
+body     buffer   bus      constant exit      file
+for      function generic  group    in        is
+label`   loop     mod      new      next      null
+of       on       open     out      range     rem
+return   signal   shared   then     to        type
+until    use      variable wait     while     with
+```
+
+* Faster than schematic  capture.
 * Language Based therefore designs created earlier can be reused. Designs created year back can be reused.
 
-## VHDL Assignments, Operators, Types
+### VHDL Assignments, Operators, Types
 
-### VHDL assignments, signals, and variables.
+#### VHDL assignments, signals, and variables.
 
-#### Signals assignment operators (<=)
+##### Signals assignment operators (<=)
 * signals wire to the entity: std_logic
 * Scheduled update
 ```
@@ -34,7 +47,7 @@ Z <= A AND B;
 Z <= D after 5ns; is a simulation
 ```
 
-#### Variables (:=)
+##### Variables (:=)
 * Variable only within the process: integrated
 * Immediate update   
 ```
@@ -43,7 +56,7 @@ a :=27; variable assignment
 ```
 variable updates immediately and does not need to wait for an event like a clock edge in the process.
 
-### Operators such as adders, subtractors, multipliers
+#### Operators such as adders, subtractors, multipliers
 
 ```
 -- many of these are synthesized in to gates
@@ -93,7 +106,7 @@ real, integer     3.87 ,1E+5, 4
 time              fs, ps, ns. us, ms  
 ```
 
-## if, elseif, end if, case, end case, loop, end loop. 
+## if, elsif, end if, case, end case, loop, end loop.
 
 
 
@@ -123,9 +136,8 @@ type STD_ULOGIC is ( 'U',             -- Uninitialized
 2. Entity
 
 * Interface with the outside world
-* Input, output, inout (bidirectional) ports
-* A Port can be `std_logic_vector(3 downto 0)`(bus, bundle)/ `std_logic(bit)`/ `unsigned(127 downto 0)`
-
+* Input, output, inout (bidirectional) ports are named as `in`, `out` and `inout`
+* The types of data that will be handled by `port` can be `std_logic_vector(i downto 0)`-->(bundle- a set of similar signals)/ `std_logic(bit)`--->(Single signal)/ `unsigned(127 downto 0)
 
 3. Architecture (Design  implementation)
 
@@ -139,15 +151,14 @@ use IEEE.std_logic_1164.all;
 
 -- Entity
 
-entity ANDGATE is
-        port(
+entity AND_GATE is
+port  (
 
-A : in std_logic;
-B : in std_logic;
-Y : out std_logic;
+A : in std_logic; -- input port declaration/ mode and type
+B : in std_logic; -- input port declaration
+Y : out std_logic); -- output port declaration
 
-            )
-end entity ANDGATE;
+end AND_Gate; --VHDL is not case sensitive. Therefore AND_GATE is the same as AND_Gate.
 
 -- Architecture
 
