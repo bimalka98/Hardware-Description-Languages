@@ -137,7 +137,7 @@ type STD_ULOGIC is ( 'U',             -- Uninitialized
 
 * Interface with the outside world
 * Input, output, inout (bidirectional) ports are named as `in`, `out` and `inout`
-* The types of data that will be handled by `port` can be `std_logic_vector(i downto 0)`-->(bundle- a set of similar signals)/ `std_logic(bit)`--->(Single signal)/ `unsigned(127 downto 0)
+* The types of data that will be handled by `port` can be `std_logic_vector(i downto 0)`-->(bundle- a set of similar signals)/ `std_logic(bit)`--->(Single signal)/ `unsigned(127 downto 0)`
 
 3. Architecture (Design  implementation)
 
