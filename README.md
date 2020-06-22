@@ -268,3 +268,5 @@ end behavioral;
 logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
+
+# Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
