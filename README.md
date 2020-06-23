@@ -16,7 +16,7 @@ Hardware Description Languages are used to describe digital systems. Projects ba
 * More structured Language than verilog, therefore suitable for beginners who are interested in hardware description languages.
 * VHDL is not case sensitive
 * VHDL is not sensitive to white space and therefore no indentation rules.(spaces and tabs)
-* Every statement ends with a semicolon. `This statement ends with a semicolon;`)
+* Every statement ends with a semicolon. `This statement ends with a semicolon;`
 * Comments are represented by two consecutive dashes in the beginning, and no block-type comments. `-- This is a comment.`
 * No strict requirement of parentheses.
 * Identifiers in VHDL are variable names, signal names and port names. And can only contain letters(a-z), numbers(0-9), underscores(-). Can only starts with a letter and can not contain 2 consecutive underscores and also can not end with an underscore.
