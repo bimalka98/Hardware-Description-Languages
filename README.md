@@ -9,7 +9,7 @@
 
 Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in  this repository. Some basic concepts need to write codes in these languages are described below.
 
-
+# WEEK 1
 
 # VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
 
@@ -272,6 +272,52 @@ end behavioral_arc;
 
 A combination of the above three models is used to implement this.
 
+# WEEK 2
+
+## Combinatorial Circuits in VHDL
+```
+-- Entity
+entity gates is port (
+  vA, vB      : in  std_logic_vector(3 downto 0);
+  A,B,C,D     : in  std_logic;  
+  W,U,X,Y,Z   : out std_logic;
+  vX, vY      : out std_logic_vector(3 downto 0) );
+end entity gates;
+
+-- Architecture
+architecture RTL of gates is
+begin
+  W  <= A and B;     U <= A nor B;  --AND, NOR
+  X  <= C xor D;     Y <= C xnor D; --XOR, XNOR
+  Z  <= (A and B) or (C and D);     --AND-OR
+  vX <= vA and vB;    -- Vector bitwise AND
+  vY <= vA or  vB;    -- Vector bitwise OR
+end architecture RTL;
+```
+### Vector Reduction in VHDL
+```
+-- Entity :  Note:  use IEEE.std_logic_misc.all;
+entity gates is port (
+  vA, vB, vC, vD  : in  std_logic_vector(3 downto 0);
+  W,U,X,Y,Z       : out std_logic  );
+end entity gates;
+ 
+-- Architecture : reduction after VHDL-2008 tools
+architecture RTL of gates is
+begin
+  W  <=  AND_REDUCE(vA);  -- Vector Reduction AND
+  U  <=  NOR_REDUCE(vB);  -- Vector Reduction NOR
+  X  <=  XOR_REDUCE(vD);  -- Vector Reduction XOR
+  Y  <=  OR_REDUCE(vA) and vB(0);  -- OR Red, bit AND
+  Z  <=  OR_REDUCE(vA and vB);     -- Bit AND, OR Red
+end architecture RTL;
+
+```
+using VHDL-2008 you can use either of the following as an XOR reduction for bus A = "1011" :
+
+1. z_out <= XOR( A );
+2. z_out <= XOR_REDUCE( A );
+
 # Build and run a simulation in ModelSim
 
 1. Open ModelSim and create a new project.
@@ -296,4 +342,4 @@ logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
 
-# Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
+### Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
