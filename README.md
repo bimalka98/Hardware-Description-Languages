@@ -274,27 +274,11 @@ A combination of the above three models is used to implement this.
 
 # WEEK 2
 
-## Combinatorial Circuits in VHDL
-```
--- Entity
-entity gates is port (
-  vA, vB      : in  std_logic_vector(3 downto 0);
-  A,B,C,D     : in  std_logic;  
-  W,U,X,Y,Z   : out std_logic;
-  vX, vY      : out std_logic_vector(3 downto 0) );
-end entity gates;
-
--- Architecture
-architecture RTL of gates is
-begin
-  W  <= A and B;     U <= A nor B;  --AND, NOR
-  X  <= C xor D;     Y <= C xnor D; --XOR, XNOR
-  Z  <= (A and B) or (C and D);     --AND-OR
-  vX <= vA and vB;    -- Vector bitwise AND
-  vY <= vA or  vB;    -- Vector bitwise OR
-end architecture RTL;
-```
 ### Vector Reduction in VHDL
+
+* Bitwise operation over two vectors can be done simply as (`std_logic_vector_A  <operator> std_logic_vector_B`)
+
+* Using `<operator>_REDUCE(std_logic_vector)` or `<operator>(std_logic_vector)`, we can reduce the std_logic_vector into a single std_logic. As an example, OR_REDUCE(V_A) will give the output, which was generated through bitwise OR over all the V_A elements.
 ```
 -- Entity :  Note:  use IEEE.std_logic_misc.all;
 entity gates is port (
@@ -317,6 +301,166 @@ using VHDL-2008 you can use either of the following as an XOR reduction for bus 
 
 1. z_out <= XOR( A );
 2. z_out <= XOR_REDUCE( A );
+
+<!-- New section -->
+# Synchronous and Combinational logic in VHDL.
+
+## Combinational Logic
+
+* AND, OR, NOT gates are included in this combinational logic.
+* Finite amount of time is taken to produce output when the inputs are given.
+* Asynchronous path(No clock is involved).
+* Can make synchronous by connecting a DLatche at the output.(output + D terminal)
+
+```
+-- Entity
+entity gates is port (
+  vA, vB      : in  std_logic_vector(3 downto 0);
+  A,B,C,D     : in  std_logic;  
+  W,U,X,Y,Z   : out std_logic;
+  vX, vY      : out std_logic_vector(3 downto 0) );
+end entity gates;
+
+-- Architecture
+architecture RTL of gates is
+begin
+  W  <= A and B;     U <= A nor B;  --AND, NOR
+  X  <= C xor D;     Y <= C xnor D; --XOR, XNOR
+  Z  <= (A and B) or (C and D);     --AND-OR
+  vX <= vA and vB;    -- Vector bitwise AND
+  vY <= vA or  vB;    -- Vector bitwise OR
+end architecture RTL;
+```
+## Synchronous Logic: Latches and Flip Flops
+
+* Latches and Flip Flops are included in  this synchronous logic.
+* Logic path is synchronized with a clock.
+
+### Implementation of a `D latch` in VHDL
+
+```
+-- Entity
+entity DLatches is port (
+  d, gate, clr        : in  std_logic;  
+  q                   : out std_logic    );
+end entity DLatches;
+
+
+-- Architecture
+architecture LArch of DLatches is begin
+  latch_proc_1 : process (gate, d)
+  begin
+      if    (gate='1') then  q <= d;  
+               -- No rising_edge()
+      end if;  
+         -- No gate=0 value, so latch inferred
+  end process latch_proc_1;
+end LArch;
+
+-- another Latch example
+architecture LArch of DLatches is begin
+  latch_proc_2 : process (gate, d, clr)
+  begin
+      if    (clr ='1') then  q <= '0';
+      elsif (gate='1') then  q <= d;   
+      end if;
+  end process latch_proc_2;
+end architecture LArch;
+
+```
+### implementation of D Flip Flop-Sync Reset
+
+```
+-- Entity
+entity DFF is port (
+  d, clk, reset          : in  std_logic;  
+  q                      : out std_logic    );
+end entity DFF;
+
+
+-- Architecture,
+-- could use (clk'event and clk='1')
+
+architecture DFF_Arch of DFF is
+  begin dff_proc_1 : process (clk)
+    begin
+       if (rising_edge(clk))  then  
+         if (reset='1') then q <=  '0';  
+                 --  Sync Reset
+         else                q <= d;
+         end if;
+       end if;
+  end process dff_proc_1;
+end architecture DFF_Arch;
+
+```
+Either of the following constructs will create a Flip-Flop :
+
+1.  if ( clk'event and clk='1' ) then
+2.  if ( rising_edge(clk) ) then
+
+### implementation of D Flip Flop-Async Reset
+* Additional set input is here.
+```
+-- Entity
+entity DFF is port (
+  d, clk, set, reset     : in  std_logic;  
+  q                      : out std_logic    );
+end entity DFF;
+
+-- Architecture
+architecture DFF_Arch of DFF is
+  begin dff_proc_2 : process (clk, set, reset)
+    begin
+       if    (reset='1')        then  q <= '0';  
+              -- Async
+       elsif (rising_edge(clk)) then
+          if    (set='0')       then  q <=  '1';
+              -- Sync
+          else                        q <=   d;  
+              -- Sync
+          end if;
+       end if;
+  end process dff_proc_2;
+end architecture DFF_Arch;
+
+```
+### Implementation of D Flip Flop – Clock Enable
+
+```
+-- Entity
+entity DFF is port (
+  d, clk, ce, reset      : in  std_logic;  
+  q                      : out std_logic    );
+end entity DFF;
+
+-- Architecture
+architecture DFF_Arch of DFF is
+  begin dff_proc_3 : process (clk, ce, reset)
+    begin
+       if    (reset='1')        then  q <= '0';  
+                -- Async
+       elsif (rising_edge(clk)) then
+          if    (ce='1')        then  q <=   d;  
+                -- Sync
+          end if;
+       end if;
+   end process dff_proc_3;
+end architecture DFF_Arch;
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Build and run a simulation in ModelSim
 
