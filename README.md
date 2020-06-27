@@ -331,12 +331,65 @@ begin
   vY <= vA or  vB;    -- Vector bitwise OR
 end architecture RTL;
 ```
+## Sequential Logic Designs
+
+In combinational logic there are not any feed back loops in the design. But in sequential logic there are feedback loops(cycles) in the design. Therefore they can be used to store logical state(o or 1). To analyze the behavior of such circuit propagation delay must be taken into account.
+
 ## Synchronous Logic: Latches and Flip Flops
 
 * Latches and Flip Flops are included in  this synchronous logic.
 * Logic path is synchronized with a clock.
+* In a D latch there is no clock signal. But in a D Flip Flop there is clock signal.
+
+### implementation of SR latch
+
+* SR - implies set and reset
+* SR latch can be implemented using either nor gates or nand gates.
+
+1. When implementing using NOR gates, Configuration must be as follows:
+
+```
+Truth table for NOR gate
+A B     A nor B
+0 0        1
+0 1        0
+1 0        0
+1 1        0
+
+```
+* R input goes with upper nor gate. S input goes with lower nor gate.
+* R --> goes with Normal path (Q)
+* S --> goes with complement path (Q')
+
+* If S and R both 0; State will be preserved.
+* If Set is HIGH; state will be set to 1.
+* If reset is HIGH; state will be set to 0.
+
+* Consider only  the Q when defining the Truth table. Because Q' is always the complement of the Q.
+```
+Truth table for SR latch
+S R Q_n   Q_n+1
+
+-- First Consider the normal path to take the Q_n+1
+0 0 0     Q_n    -- Q_n+1 = (R=0 + Q_n')' ==> ((R=0)'.Q_n) = 1.Q_n = Q_n
+0 0 1     Q_n    -- When R = 0 and S = 0, Q_n+1 = Q_n ; State Preserved.
+
+0 1 0      0     -- Q_n+1 = (R=1 + Q_n')' ==> (1)' = 0; Therefore when R=1
+0 1 1      0     -- Regardless of the present value of Q_n;  Q_n+1 = 0.
+
+-- Now consider the complement path to take the Q_n+01
+1 0 0      1     -- Consider complement path- (Q_n+1)' = (S=1 + Q_n)' = 0
+1 0 1      1     -- Regardless of the present value of Q_n;  Q_n+1 = 1.
+
+1 1 0     Invalid
+1 1 1     Invalid
+```
 
 ### Implementation of a `D latch` in VHDL
+
+* D latch has two external inputs(D-data, C-control), one output(Q) and a feedback(which is considered as another input).
+* C - '1' -->  Q = Previous value of Q holds.
+* C - '0' -->  Q = D
 
 ```
 -- Entity
