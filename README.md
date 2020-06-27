@@ -345,9 +345,7 @@ In combinational logic there are not any feed back loops in the design. But in s
 
 * SR - implies set and reset
 * SR latch can be implemented using either nor gates or nand gates.
-
-1. When implementing using NOR gates, Configuration must be as follows:
-
+![SR latch](https://upload.wikimedia.org/wikipedia/commons/5/53/RS_Flip-flop_%28NOR%29.svg)
 ```
 Truth table for NOR gate
 A B     A nor B
@@ -355,8 +353,9 @@ A B     A nor B
 0 1        0
 1 0        0
 1 1        0
-
 ```
+1. When implementing using NOR gates, Configuration must be as follows:
+
 * R input goes with upper nor gate. S input goes with lower nor gate.
 * R --> goes with Normal path (Q)
 * S --> goes with complement path (Q')
@@ -387,6 +386,7 @@ S R Q_n   Q_n+1
 
 ### Implementation of a `D latch` in VHDL
 
+![D latch](https://upload.wikimedia.org/wikipedia/commons/c/cb/D-type_Transparent_Latch_%28NOR%29.svg)
 * D latch has two external inputs(D-data, C-control), one output(Q) and a feedback(which is considered as another input).
 * C - '1' -->  Q = Previous value of Q holds.
 * C - '0' -->  Q = D
