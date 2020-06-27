@@ -345,7 +345,12 @@ In combinational logic there are not any feed back loops in the design. But in s
 
 * SR - implies set and reset
 * SR latch can be implemented using either nor gates or nand gates.
+
 ![SR latch](https://upload.wikimedia.org/wikipedia/commons/5/53/RS_Flip-flop_%28NOR%29.svg)
+
+
+1. When implementing using NOR gates, Configuration must be as follows:
+
 ```
 Truth table for NOR gate
 A B     A nor B
@@ -353,16 +358,19 @@ A B     A nor B
 0 1        0
 1 0        0
 1 1        0
+
+Note: NOT gate can be implemented using NOR, consider first and last lines of the truth table.
+when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0. 
 ```
-1. When implementing using NOR gates, Configuration must be as follows:
 
 * R input goes with upper nor gate. S input goes with lower nor gate.
 * R --> goes with Normal path (Q)
 * S --> goes with complement path (Q')
 
 * If S and R both 0; State will be preserved.
-* If Set is HIGH; state will be set to 1.
-* If reset is HIGH; state will be set to 0.
+* If Set is 1; state will be set to 1.
+* If reset is 1; state will be set to 0.
+* There is no both S and R are 1 state. It is an invalid input.
 
 * Consider only  the Q when defining the Truth table. Because Q' is always the complement of the Q.
 ```
@@ -387,35 +395,34 @@ S R Q_n   Q_n+1
 ### Implementation of a `D latch` in VHDL
 
 ![D latch](https://upload.wikimedia.org/wikipedia/commons/c/cb/D-type_Transparent_Latch_%28NOR%29.svg)
-* D latch has two external inputs(D-data, C-control), one output(Q) and a feedback(which is considered as another input).
-* C - '1' -->  Q = Previous value of Q holds.
-* C - '0' -->  Q = D
+
+* D latch has two inputs(D-data, E-enable) and two outputs (Q and its complement Q')
+* Whenever the Enable = 0 regardless of the D input, state of the SR latch will be preserved.(Memory state)
+* When the Enable = 1, Q will be equal to the  input D, (when D = 1 --> Q = 1, when D = 0 --> Q = 0)
 
 ```
 -- Entity
 entity DLatches is port (
-  d, gate, clr        : in  std_logic;  
+  d, enable, clr        : in  std_logic;  
   q                   : out std_logic    );
 end entity DLatches;
 
 
 -- Architecture
 architecture LArch of DLatches is begin
-  latch_proc_1 : process (gate, d)
+  latch_proc_1 : process (enable, d)
   begin
-      if    (gate='1') then  q <= d;  
-               -- No rising_edge()
-      end if;  
-         -- No gate=0 value, so latch inferred
+      if  (enable ='1') then  q <= d;  -- No rising_edge()/Asynchronous logic
+      end if;                          -- No enable = 0 value, so latch inferred
   end process latch_proc_1;
 end LArch;
 
 -- another Latch example
 architecture LArch of DLatches is begin
-  latch_proc_2 : process (gate, d, clr)
+  latch_proc_2 : process (enable, d, clr)
   begin
-      if    (clr ='1') then  q <= '0';
-      elsif (gate='1') then  q <= d;   
+      if    (clr ='1')    then  q <= '0';
+      elsif (enable ='1') then  q <= d;   
       end if;
   end process latch_proc_2;
 end architecture LArch;
