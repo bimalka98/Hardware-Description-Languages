@@ -3,24 +3,24 @@
 ## Process of digital system designing
 * Making a conceptual idea of the logical system to be built.
 * Define a set of constraints that the final design should have.
-* Choosing a set of primitive components from which the design is implemented.(This can be achieved by sub-dividing the design until the most primitive components are revealed.)
+* Choosing a set of primitive components from which the design is implemented. (This can be achieved by sub-dividing the design until the most primitive components are revealed.)
 
 ## Hardware Description Languages(HDLs) for FPGA Design
 
-Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in  this repository. Some basic concepts need to write codes in these languages are described below.
+Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. Some basic concepts need to write codes in these languages are described below.
 
 # WEEK 1
 
 # VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
 
-* More structured Language than verilog, therefore suitable for beginners who are interested in hardware description languages.
+* More structured Language than Verilog, therefore suitable for beginners who are interested in hardware description languages.
 * VHDL is not case sensitive
-* VHDL is not sensitive to white space and therefore no indentation rules.(spaces and tabs)
+* VHDL is not sensitive to white space and therefore no indentation rules. (spaces and tabs)
 * Every statement ends with a semicolon. `This statement ends with a semicolon;`
-* Comments are represented by two consecutive dashes in the beginning, and no block-type comments. `-- This is a comment.`
+* Comments are represented by two consecutive dashes at the beginning and no block-type comments. `-- This is a comment.`
 * No strict requirement of parentheses.
 * Identifiers in VHDL are variable names, signal names and port names. And can only contain letters(a-z), numbers(0-9), underscores(-). Can only starts with a letter and can not contain 2 consecutive underscores and also can not end with an underscore.
-* As every programming language Reserved words can not be used in naming of objects and some reserved words are as follows.
+* As every programming language Reserved words can not be used in the naming of objects and some reserved words are as follows.
 * Code is executed concurrently, NOT sequentially as in usual computer programs.
 
 ```
@@ -42,7 +42,7 @@ In VHDL there are several objects types. As `signal`(to represent a wire), `vari
 #### Signals assignment operators (`<=`)
 * signals wire to the entity
 * Scheduled update (needs some time to update to the new value after the operator is executed.)
-* To assign new value to a signal type object this operator is used.
+* To assign a new value to a signal type object this operator is used.
 
 ```
 Z <= A AND B;
@@ -51,9 +51,9 @@ Z <= D after 5ns;
 
 #### Variables (`:=`)
 
-* variables can be used only within the `process construct`(what is inside the process construct is executed top to bottom sequentially, NOT concurrently)
-* Immediate update(right after the operator is executed new value takes the place of previous value.)
-* To assign new value to a variable type object this operator is used.
+* variables can be used only within the `process construct`(what is inside the process construct is executed top to the bottom sequentially, NOT concurrently)
+* Immediate update(right after the operator is executed new value takes the place of the previous value.)
+* To assign a new value to a variable type object this operator is used.
 
 ```
 count   := count +1;  -- simulation loop counter
@@ -82,7 +82,7 @@ and , or , nand , nor , xor , xnor logical operators
 #### Order Precedence of operators
 
 1. Left to right,  Parenthesis
-2. Unary, Single operand on right (mod A)
+2. Unary, Single operand on the right (mod A)
 3. Binary, operands on both sides (A + B)
 
 ### Data Types
@@ -109,7 +109,7 @@ time              fs, ps, ns. us, ms
 
 
 
-## VHDL design files has three main parts,
+## VHDL design files have three main parts,
 
 1. Standard logic Definition IEEE (IEEE_std_logic_1164)
 
@@ -174,10 +174,10 @@ end this_arch;
 ```
 Gates are synthesized form the description of VHDL.
 
-## VHDL modeling
+## VHDL modelling
 
 
-Consider four bit comparator. For all the modeling types the `Standard logic Definition` and `entity` are the same. Only the `architecture` differs. Here in this comparator output is one only when the inputs are equal and zero otherwise.
+Consider four-bit comparator. For all the modelling types the `Standard logic Definition` and `entity` are the same. Only the `architecture` differs. Here in this comparator output is one only when the inputs are equal and zero otherwise.
 
 ```
 -- Use standard IEEE library
@@ -196,7 +196,7 @@ end comparator4;
 
 ```
 
-### 1. Structured gate level modeling
+### 1. Structured gate-level modelling
 
 library predefined primitives such as and, or and and2 and or2, Boolean logic bitwise and bitwise ors, or library user-defined functions
 
@@ -231,7 +231,7 @@ Result <= not(A(3) xor B(3)) and
 end bool_arch;
 ```
 
-### 2. Data Flow modeling
+### 2. Data Flow modelling
 
 Use assignments and select statements
 
@@ -248,7 +248,7 @@ end dataflow_arc;
 
 ```
 
-### 3. Behavioral modeling
+### 3. Behavioural modelling
 
 Have a `process statement`, where anytime A or B changes in the sensitivity list, we update the circuit.
 ```
@@ -268,7 +268,7 @@ begin
   end process compareProcess;
 end behavioral_arc;
 ```
-### 4. Hybrid modeling
+### 4. Hybrid modelling
 
 A combination of the above three models is used to implement this.
 
@@ -333,13 +333,13 @@ end architecture RTL;
 ```
 ## Sequential Logic Designs
 
-In combinational logic there are not any feed back loops in the design. But in sequential logic there are feedback loops(cycles) in the design. Therefore they can be used to store logical state(o or 1). To analyze the behavior of such circuit propagation delay must be taken into account.
+In combinational logic, there are not any feedback loops in the design. But in sequential logic, there are feedback loops(cycles) in the design. Therefore they can be used to store logical state(o or 1). To analyze the behaviour of such circuit propagation delay must be taken into account.
 
 ## Synchronous Logic: Latches and Flip Flops
 
-* Latches and Flip Flops are included in  this synchronous logic.
+* Latches and Flip Flops are included in this synchronous logic.
 * Logic path is synchronized with a clock.
-* In a D latch there is no clock signal. But in a D Flip Flop there is clock signal.
+* In a D latch there is no clock signal. But in a D Flip Flop, there is a clock signal.
 
 ### Note that
 ### Q_n: Present state of latch/Flip Flop
@@ -349,14 +349,14 @@ In combinational logic there are not any feed back loops in the design. But in s
 ## Implementation of SR latch
 
 * SR - implies set and reset
-* SR latch can be implemented using either nor gates or nand gates.
+* SR latch can be implemented using either nor gates or NAND gates.
 
 #### 1. When implementing using NOR gates, Configuration must be as follows:
 
 ![SR latch](https://upload.wikimedia.org/wikipedia/commons/5/53/RS_Flip-flop_%28NOR%29.svg)
 
 ```
-Truth table for NOR gate
+The truth table for NOR gate
 A B     A nor B
 0 0        1
 0 1        0
@@ -371,13 +371,13 @@ when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0.
 * R --> goes with Normal path (Q)
 * S --> goes with complement path (Q')
 * If S and R both 0; State will be preserved.
-* If Set is 1; state will be set to 1.
-* If reset is 1; state will be set to 0.
+* If Set is 1; the state will be set to 1.
+* If reset is 1; the state will be set to 0.
 * There is no both S and R are 1 state. It is an invalid input.
 
-* Consider only  the Q when defining the Truth table. Because Q' is always the complement of the Q.
+* Consider only the Q when defining the Truth table. Because Q' is always the complement of the Q.
 ```
-Truth table for SR latch
+The truth table for SR latch
 S R Q_n   Q_n+1
 
 -- First Consider the normal path to take the Q_n+1
@@ -413,9 +413,9 @@ A B A nand B
 ```
 
 ```
-Truth table for SR latch with NAND gates.
+The truth table for SR latch with NAND gates.
 
-* Everything found in the NOR gate implementation is now in the other way round.(NOR implementation eke thiyena properties okkoma anith paththata)
+* Everything found in the NOR gate implementation is now in the other way round. (NOR implementation eke thiyena properties okkoma anith paththata)
 
 S R Q_n   Q_n+1
 
@@ -432,7 +432,7 @@ S R Q_n   Q_n+1
 ![D latch](https://upload.wikimedia.org/wikipedia/commons/c/cb/D-type_Transparent_Latch_%28NOR%29.svg)
 
 * D latch has two inputs(D-data, E-enable) and two outputs (Q and its complement Q')
-* Whenever the Enable = 0 regardless of the D input, state of the SR latch will be preserved.(Memory state)
+* Whenever the Enable = 0 regardless of the D input, state of the SR latch will be preserved. (Memory state)
 * When the Enable = 1, Q will be equal to the  input D, (when D = 1 --> Q = 1, when D = 0 --> Q = 0)
 
 
@@ -474,7 +474,7 @@ end architecture LArch;
 
 ![SR Flip Flop](https://learnabout-electronics.org/Digital/images/Clocked-SR-ff-high-activated.gif)
 ```
-Truth table of an SR Flip Flop (Extended version of NAND SR latch)
+The truth table of an SR Flip Flop (Extended version of NAND SR latch)
 
 * Truth table is the same as `NOR gate implementation of SR latch`.
 * NOR SR latch == NAND SR Flip Flop
@@ -492,7 +492,7 @@ CLK S R Q_n  Q_n+1
 ### Implementation of D Flip Flop(DFF) with Sync & Reset
 
 * Extended version of SR Flip Flop with additional NOT gate.
-* When clock is LOW(0), both inputs to the NAND SR latch will be HIGH and therefore state of the latch will be preserved. Q_n+1 = Q_n(Memory state)
+* When the clock is LOW(0), both inputs to the NAND SR latch will be HIGH and therefore the state of the latch will be preserved. Q_n+1 = Q_n(Memory state)
 * When clock is HIGH(1), Q_n+1 = D(Memory write state set/reset)
 
 ```
@@ -575,10 +575,10 @@ end architecture DFF_Arch;
 ```
 
 
-# Build and run a simulation in ModelSim
+# Build and simulate ModelSim
 
 1. Open ModelSim and create a new project.
-2. Create  new source files as required.
+2. Create new source files as required.
 3. To add additional new source files
 ![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/new_source.png)
 4. To changes the layout of the ModelSim simulation environment
@@ -587,7 +587,7 @@ end architecture DFF_Arch;
 ![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/set_initial_val.png)
 6. To run the simulation
 ![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/run.png)
-7. To changes the radix of entity.
+7. To changes the radix of the entity.
 ![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/radix.png)
 
 
@@ -597,10 +597,10 @@ end architecture DFF_Arch;
 ![FPGA logic cell](https://upload.wikimedia.org/wikipedia/commons/1/1c/FPGA_cell_example.png)
 logic is concurrent, not sequential
 
-FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
+FPGA gates are hardware and therefore executes in parallel. Not as software which is executed sequentially.
 
 ## References:
 
 * Wikipedia: https://en.wikipedia.org/wiki/Flip-flop_(electronics)
 * Images: https://learnabout-electronics.org
-* Course content can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
+* Course content can be found at Coursera: https://www.coursera.org/learn/fpga-hardware-description-languages
