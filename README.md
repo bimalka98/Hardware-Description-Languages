@@ -341,7 +341,7 @@ In combinational logic there are not any feed back loops in the design. But in s
 * Logic path is synchronized with a clock.
 * In a D latch there is no clock signal. But in a D Flip Flop there is clock signal.
 
-### implementation of SR latch
+## Implementation of SR latch
 
 * SR - implies set and reset
 * SR latch can be implemented using either nor gates or nand gates.
@@ -463,13 +463,25 @@ end architecture LArch;
 
 <!--------------------------------------------- Flip Flops-->
 
-### Implementation of SR Flip Flop
+## Implementation of SR Flip Flop
 
-* Implementation of SR Flip Flop using NAND gates is given below.
+* Implementation of an SR Flip Flop using NAND gates is given below.
+
+![SR Flip Flop](https://learnabout-electronics.org/Digital/images/Clocked-SR-ff-high-activated.gif)
+```
+Truth table of an SR Flip Flop (Extended version of NAND SR latch)
+
+CLK S R Q_n  Q_n+1
+1   0 0  X    Q_n(State Preserved)
+1   0 1  X     0 (Reset Condition)
+1   1 0  X     1 (Set Condition)
+1   1 1  X   Invalid
+
+```
 
 
 
-### implementation of D Flip Flop-Sync Reset
+### Implementation of D Flip Flop-Sync Reset
 
 ```
 -- Entity
@@ -576,6 +588,8 @@ logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
 
-Wikipedia: https://en.wikipedia.org/wiki/Flip-flop_(electronics)
+## References:
 
-Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
+* Wikipedia: https://en.wikipedia.org/wiki/Flip-flop_(electronics)
+* Images: https://learnabout-electronics.org
+* Course content can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
