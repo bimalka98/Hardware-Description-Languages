@@ -341,6 +341,11 @@ In combinational logic there are not any feed back loops in the design. But in s
 * Logic path is synchronized with a clock.
 * In a D latch there is no clock signal. But in a D Flip Flop there is clock signal.
 
+### Note that
+### Q_n: Present state of latch/Flip Flop
+### Q_n+1: Next state of latch/Flip Flop
+
+
 ## Implementation of SR latch
 
 * SR - implies set and reset
@@ -462,7 +467,7 @@ end architecture LArch;
 
 <!--------------------------------------------- Flip Flops-->
 
-## Implementation of SR Flip Flop
+### Implementation of SR Flip Flop
 
 * Implementation of an SR Flip Flop using NAND gates is given below.
 
@@ -471,7 +476,7 @@ end architecture LArch;
 ```
 Truth table of an SR Flip Flop (Extended version of NAND SR latch)
 
-* Truth table is the same as `NOR implementation of SR latch`.
+* Truth table is the same as `NOR gate implementation of SR latch`.
 * NOR SR latch == NAND SR Flip Flop
 
 CLK S R Q_n  Q_n+1
@@ -484,7 +489,11 @@ CLK S R Q_n  Q_n+1
 
 
 
-### Implementation of D Flip Flop-Sync Reset
+### Implementation of D Flip Flop(DFF) with Sync & Reset
+
+* Extended version of SR Flip Flop with additional NOT gate.
+* When clock is LOW(0), both inputs to the NAND SR latch will be HIGH and therefore state of the latch will be preserved. Q_n+1 = Q_n(Memory state)
+* When clock is HIGH(1), Q_n+1 = D(Memory write state set/reset)
 
 ```
 -- Entity
@@ -495,12 +504,11 @@ end entity DFF;
 
 
 -- Architecture,
--- could use (clk'event and clk='1')
 
 architecture DFF_Arch of DFF is
   begin dff_proc_1 : process (clk)
     begin
-       if (rising_edge(clk))  then  
+      if (rising_edge(clk))  then     -- could use (clk'event and clk='1')
          if (reset='1') then q <=  '0';  
                  --  Sync Reset
          else                q <= d;
