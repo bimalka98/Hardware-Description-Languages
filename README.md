@@ -302,7 +302,7 @@ using VHDL-2008 you can use either of the following as an XOR reduction for bus 
 1. z_out <= XOR( A );
 2. z_out <= XOR_REDUCE( A );
 
-<!-- New section -->
+<!------------------------------------------------ New section -->
 # Synchronous and Combinational logic in VHDL.
 
 ## Combinational Logic
@@ -346,10 +346,9 @@ In combinational logic there are not any feed back loops in the design. But in s
 * SR - implies set and reset
 * SR latch can be implemented using either nor gates or nand gates.
 
+#### 1. When implementing using NOR gates, Configuration must be as follows:
+
 ![SR latch](https://upload.wikimedia.org/wikipedia/commons/5/53/RS_Flip-flop_%28NOR%29.svg)
-
-
-1. When implementing using NOR gates, Configuration must be as follows:
 
 ```
 Truth table for NOR gate
@@ -360,7 +359,7 @@ A B     A nor B
 1 1        0
 
 Note: NOT gate can be implemented using NOR, consider first and last lines of the truth table.
-when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0. 
+when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0.
 ```
 
 * R input goes with upper nor gate. S input goes with lower nor gate.
@@ -392,6 +391,38 @@ S R Q_n   Q_n+1
 1 1 1     Invalid
 ```
 
+#### 2. When implementing using NAND gates, Configuration must be as follows:
+
+![nand sr latch](https://upload.wikimedia.org/wikipedia/commons/9/92/SR_Flip-flop_Diagram.svg)
+
+* Due to less power consumption than the NOR gate implementation this NAND gate implementation is preferred over NOR gate implementation.
+* S and R interchanged.
+* S upper and goes with Q.
+* R lower and goes with Q'.
+
+```
+A B A nand B
+0 0    1
+0 1    1
+1 0    1
+1 1    0
+```
+
+```
+Truth table for SR latch with NAND gates.
+
+* Everything found in the NOR gate implementation is now in the other way round.
+
+S R Q_n   Q_n+1
+
+0 0 X     Invalid
+0 1 X        1   -- When Reset is given Q_n+1 = 1 (R ==> Set to 1)
+1 0 X        0   -- When Set is given Q_n+1 =  0 (S ==> Reset to 0)
+1 1 X       Q_n  -- Memory state. State is preserved.
+
+```
+
+
 ### Implementation of a `D latch` in VHDL
 
 ![D latch](https://upload.wikimedia.org/wikipedia/commons/c/cb/D-type_Transparent_Latch_%28NOR%29.svg)
@@ -399,6 +430,7 @@ S R Q_n   Q_n+1
 * D latch has two inputs(D-data, E-enable) and two outputs (Q and its complement Q')
 * Whenever the Enable = 0 regardless of the D input, state of the SR latch will be preserved.(Memory state)
 * When the Enable = 1, Q will be equal to the  input D, (when D = 1 --> Q = 1, when D = 0 --> Q = 0)
+
 
 ```
 -- Entity
@@ -428,6 +460,15 @@ architecture LArch of DLatches is begin
 end architecture LArch;
 
 ```
+
+<!--------------------------------------------- Flip Flops-->
+
+### Implementation of SR Flip Flop
+
+* Implementation of SR Flip Flop using NAND gates is given below.
+
+
+
 ### implementation of D Flip Flop-Sync Reset
 
 ```
@@ -511,17 +552,6 @@ end architecture DFF_Arch;
 ```
 
 
-
-
-
-
-
-
-
-
-
-
-
 # Build and run a simulation in ModelSim
 
 1. Open ModelSim and create a new project.
@@ -546,4 +576,6 @@ logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which are executed in sequential manner.
 
-### Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
+Wikipedia: https://en.wikipedia.org/wiki/Flip-flop_(electronics)
+
+Course content related to this page can be found at coursera : https://www.coursera.org/learn/fpga-hardware-description-languages
