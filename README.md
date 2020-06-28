@@ -365,7 +365,6 @@ when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0.
 * R input goes with upper nor gate. S input goes with lower nor gate.
 * R --> goes with Normal path (Q)
 * S --> goes with complement path (Q')
-
 * If S and R both 0; State will be preserved.
 * If Set is 1; state will be set to 1.
 * If reset is 1; state will be set to 0.
@@ -411,7 +410,7 @@ A B A nand B
 ```
 Truth table for SR latch with NAND gates.
 
-* Everything found in the NOR gate implementation is now in the other way round.
+* Everything found in the NOR gate implementation is now in the other way round.(NOR implementation eke thiyena properties okkoma anith paththata)
 
 S R Q_n   Q_n+1
 
@@ -467,9 +466,13 @@ end architecture LArch;
 
 * Implementation of an SR Flip Flop using NAND gates is given below.
 
+
 ![SR Flip Flop](https://learnabout-electronics.org/Digital/images/Clocked-SR-ff-high-activated.gif)
 ```
 Truth table of an SR Flip Flop (Extended version of NAND SR latch)
+
+* Truth table is the same as `NOR implementation of SR latch`.
+* NOR SR latch == NAND SR Flip Flop
 
 CLK S R Q_n  Q_n+1
 1   0 0  X    Q_n(State Preserved)
