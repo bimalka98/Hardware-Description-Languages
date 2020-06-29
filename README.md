@@ -576,6 +576,140 @@ end architecture DFF_Arch;
 
 ```
 
+<!-- New section ---------------------------------->
+## Counters and Registers
+
+### Data register Implementation
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/data_reg.PNG)
+```
+-- Entity
+entity Data_Reg is port (
+  clk, reset, load : in  std_logic;  
+  d        : in  std_logic_vector(3 downto 0);
+  q        : out std_logic_vector(3 downto 0));
+end entity Data_Reg;
+
+-- Architecture
+architecture Reg_Arch of Data_Reg is
+  begin dreg_proc : process (clk, reset, load)
+    begin
+      if    (reset='0')        then  q <= "0000";
+      elsif (rising_edge(clk)) then
+        if (load='1')          then  q <= d;
+        end if;
+      end if;
+  end process dreg_proc;
+end architecture Reg_Arch;a
+
+```
+### Shift Registers Implementation
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/shift_reg.PNG)
+```
+-- Entity
+entity Shift_Reg is port (
+  clk, reset, shift, d0 : in  std_logic;  
+  q    : out std_logic_vector(3 downto 0));
+end entity Shift_Reg;
+
+-- Architecture, could SLL or shift_left(q,1)
+architecture SREG_Arch of Data_Reg is begin
+  sreg_proc : process (clk, reset)
+  begin
+      if    (reset='0')        then  q <= "0000";
+      elsif (rising_edge(clk)) then
+        if  (shift='1')        then  
+                 q(0) <= d0;  
+                 q(1) <= q(0);
+                 q(2) <= q(1);
+                 q(3) <= q(2);
+        end if;
+      end if;
+  end process sreg_proc;
+end architecture SREG_Arch;
+
+```
+## Binary Counter Implementation
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/bin_counter.PNG)
+```
+-- Entity
+entity Counter is port (
+  clk, reset, load, en : in  std_logic;  
+  d         : in  std_logic_vector(3 downto 0);
+  q         : out std_logic_vector(3 downto 0));
+end entity Counter;
+
+-- Architecture
+architecture Counter_Arch of Counter is begin
+  count_proc : process (clk, reset, load, en)
+  begin
+      if    (reset='1')      then  q  <= "0000";
+      elsif (rising_edge(clk)) then
+         if (load='1')       then  q  <= d;
+         elsif (en='1')      then  q  <= q + 1;
+
+                -- To enable this feature, right click on the ModelSim vhd file
+                -- Then click Properties
+                -- Enable "Use 1076 - 2008"
+
+         end if;
+      end if;
+  end process count_proc;
+end architecture Counter_Arch;
+
+```
+### Register File Implementation
+
+Register Files are useful constructs that allow addressing of registers. Each flop is assumed as an n-bit register.
+
+* New code portion called `generic` is declared in the entity in addition to the port.
+* What defined in this `generic` part will be used throughout the design. In both entity and architecture.
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/reg_file.PNG)
+```
+-- Entity --  use IEEE.numeric_std.all; integer conversion
+entity regFile is
+  generic (Dwidth : integer := 8;
+           Awidth : integer := 2 );
+  port (
+   clk, wren    : in  std_logic;  -- Clock and Write enable
+   wdata        : in  std_logic_vector(Dwidth-1 downto 0);   -- Write data
+   waddr, raddr : in  std_logic_vector(Awidth-1 downto 0);   -- Write address, Read address
+   rdata        : out std_logic_vector(Dwidth-1 downto 0) ); -- Read data
+end entity regFile;
+
+-- Architecture
+architecture RFile_Arch of regFile is
+
+    -- Declaration of a new data type.
+    type array_type (0 to 2**Awidth-1) of std_logic_vector (Dwidth-1 downto 0);
+
+    -- Making an object under the type declared.
+    signal array_reg : array_type;
+
+  begin rf_proc : process (clk, wren, wdata, waddr, raddr)
+    begin
+      if    (rising_edge(clk))      then
+         if (wren='1')              then  
+               array_reg(to_integer(unsigned(waddr)))  <= wdata; -- Type conversion
+         end if;
+         rdata <= array_reg(to_integer(unsigned(raddr)));
+     end if;
+  end process rf_proc;
+end architecture RFile_Arch;
+
+```
+
+## Buses and Tristate Buffers
+
+
+
+
+
+
+
 
 # Build and simulate ModelSim
 
@@ -594,12 +728,11 @@ end architecture DFF_Arch;
 
 
 ## FPGA logic cell
-
-
 ![FPGA logic cell](https://upload.wikimedia.org/wikipedia/commons/1/1c/FPGA_cell_example.png)
 logic is concurrent, not sequential
 
 FPGA gates are hardware and therefore executes in parallel. Not as software which is executed sequentially.
+
 
 ## References:
 
