@@ -491,6 +491,8 @@ CLK S R Q_n  Q_n+1
 
 ### Implementation of D Flip Flop(DFF) with Sync & Reset
 
+![DFF](https://electronicsforu.com/wp-contents/uploads/2017/08/d-flip-flop.png)
+
 * Extended version of SR Flip Flop with additional NOT gate.
 * When the clock is LOW(0), both inputs to the NAND SR latch will be HIGH and therefore the state of the latch will be preserved. Q_n+1 = Q_n(Memory state)
 * When clock is HIGH(1), Q_n+1 = D(Memory write state set/reset)
