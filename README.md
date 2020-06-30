@@ -864,6 +864,148 @@ architecture xorgen_arch of xorgen is begin
 end architecture xorgen_arch;  
 ```
 
+## Test Benches in VHDL
+* A test bench is a program written in any language for the purposes of exercising and verifying the functional correctness of the hardware model as coded.
+* Also known as a test fixture or test harness.
+* A test bench is a powerful tool for generating test stimulus and test results
+* A test bench can have several functional sections, including:
+1. Top-level test bench declaration
+2. Stimulus, Response, and Component  Signal declarations
+3. Component (Device Under Test) instantiations
+4. Test Monitor which logs results and reports mis-compares
+
+* Top-level test bench declaration and Component (Device Under Test) instantiations
+```
+-- Entity : no port list !
+entity tb_adder is  end entity tb_adder;
+
+----------------------------------------------------------------
+
+-- Architecture
+architecture test_arch of tb_adder is
+
+----------------------------------------------------------------
+  component Add4 port (
+     Data1,Data2 : in  std_logic_vector(3 downto 0);
+     Cin         : in  std_logic;  
+     Cout        : out std_logic;
+     Sum         : out std_logic_vector(3 downto 0) );
+  end component Add4;
+
+  signal a_tb, b_tb : std_logic_vector(3 downto 0); -- INPUT
+  signal Cin        : std_logic;                    -- INPUT
+  signal Sum_tb     : std_logic_vector(3 downto 0); -- OUTPUT
+  signal Cout_tb    : std_logic;                    -- OUTPUT
+  signal expect     : std_logic_vector(3 downto 0); --expected  
+
+
+----------------------------------------------------------------
+begin
+    -- DUT(Device under test) Instantiation
+    DUT : Add4 port map (
+          Data1 => a_tb,   Data2 => b_tb,
+          Cin   => Cin,    Cout  => Cout_tb, Sum => Sum_tb);
+----------------------------------------------------------------
+```
+* Stimulus generating
+1. By hand drawn waves
+```
+----------------------------------------------------------------          
+    -- Stimulus by hand drawn waves, poor coverage
+    stim_proc : process begin
+     wait for 0ns;
+       a_tb   <= "0010"; b_tb <= "0010"; Cin <= '0'; expect <= "0100";
+     wait for 10ns;
+       a_tb   <= "1111"; b_tb <= "0000"; Cin <= '1'; expect <= "0000";
+     wait for 10ns;
+       a_tb   <= "0010"; b_tb <= "0100"; Cin <= '1'; expect <= "0111";
+     wait;
+    end process stim_proc;
+----------------------------------------------------------------
+```
+
+-- Stimulus
+2. By using loops
+```
+----------------------------------------------------------------
+    -- Stimulus automation with loops
+    -- Architecture : Generates coverage and expected stimulus
+Loop_proc: process
+    variable i, j, k : integer;
+  begin
+    for i in 0 to 15 loop  a_tb <= i;
+      for j in 0 to 15 loop  b_tb <= j;
+        for k in 0 to 1 loop   
+          Cin <= k;
+          wait for 10ns;
+          expect <= a_tb + b_tb + Cin;
+        end loop;
+      end loo;
+    end loop;
+  end process Loop_proc;           
+end architecture test_arch;
+
+----------------------- For self checking--------------------------
+Replace,
+expect <= a_tb + b_tb + Cin;
+
+with,
+if (sum_tb /= a_tb + b_tb + Cin) then
+    write(str_o, string'(“Error - Sum”));
+    writeline(output, str_o);
+    wait;
+end if;
+----------------------------------------------------------------
+```
+* Test Monitor which logs results and reports mis-compares
+* time'image(now) is the current clock tick.
+```
+----------------------------------------------------------------
+    -- Monitor, use ieee.std_logic_textio.all;   
+    --          use std.textio.all;
+    txt_out : process (Sum_tb, Cout_tb)
+      variable str_o : line;
+    begin
+      write(str_o, string'(" a="));      write(str_o, a_tb);
+      write(str_o, string'(" b="));      write(str_o, b_tb);
+      write(str_o, string'(" cin="));    write(str_o, Cin);   
+      write(str_o, string'(" sum="));    write(str_o, Sum_tb);   
+      write(str_o, string'(" cout="));   write(str_o, Cout_tb);   
+      write(str_o, string'(" expect=")); write(str_o, expect);
+      assert false report time'image(now) & str_o.all  
+             severity note;
+    end process txt_out;
+----------------------------------------------------------------               
+end architecture test_arch;
+```
+* Output
+```
+(ModelSim : Time messages removed)
+# ** Note: 0 ns  a=0010 b=0010 cin=0 sum=XXXX cout=X expect=0100
+# ** Note: 0 ns  a=0010 b=0010 cin=0 sum=0100 cout=0 expect=0100
+# ** Note: 10 ns a=1111 b=0000 cin=1 sum=0000 cout=1 expect=0000
+# ** Note: 20 ns a=0010 b=0100 cin=1 sum=0111 cout=0 expect=0111
+```
+
+
+
+
+
+
+
+
+
+
+### Test Benches in VHDL: Synchronous
+
+The clk_gen process presented here doesn't stop generating a clock signal after a few cycles due to the wait for T/2 statement. The clock process runs forever, independently and in parallel to other processes.
+
+
+
+
+
+
+
 # Build and simulate ModelSim
 
 
