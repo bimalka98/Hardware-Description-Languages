@@ -704,14 +704,168 @@ end architecture RFile_Arch;
 
 ## Buses and Tristate Buffers
 
+### Tri-state Buses
+External connections on FPGA pins are often in a group of related signals known as a `bus`. The I/O structure of FPGAs often  allow the bus to be tri-stated, so that multiple drivers can be attached to the IO at the same time, with only one driver active.
+```
+-- Entity
+entity y_tri is port (
+  OE        : in  std_logic;
+  Dout      : in  std_logic_vector(3 downto 0);
+  Pinout    : out std_logic_vector(3 downto 0) );
+end entity y_tri;
+ 
+-- Architecture
+architecture tri_arch of y_tri is
+begin
+      Pinout <= Dout when (OE='1'),
+                (others  => "ZZZZ") when others ;
+end architecture tri_arch;
+
+```
+When driving external tri-stated buses, some protocol should be used to assure that only one drive is active on the bus at a time. VHDL code can define tri-state buses, but tri-state buses are typically not implemented inside of an FPGA but rather as a mux/multiplexer.
+
+Tri stating the output of an IO pin allows for external devices to safely drive the shared pin as an input. Driving an pin as output '0' or ground while and external device is driving a high voltage '1' value onto the IO pin could burn out the driver on either device. Setting the IO to high impedance or 'Z' will remove the voltage conflict.
 
 
+### Bi-directional Buses
+The I/O structure of the FPGA will also allow us to create Bi-directional buses, in which the external pin can be treated as either an input or an output, depending on the state of the enable signal.
+```
+-- Entity
+entity bidir is port (
+ OE    : in    std_logic;
+ Dout  : in    std_logic_vector(3 downto 0);
+ Din   : out   std_logic_vector(3 downto 0);
+ IOpin : inout std_logic_vector(3 downto 0) );
+end entity bidir;
+
+-- Architecture
+architecture bidir_arch of bidir is
+  begin bi_proc : process (OE, Dout)
+    begin
+      Din <= IOpin;
+      if    (OE='1') then IOpin <= Dout;
+      elsif (OE='0') then IOpin <= "ZZZZ";
+      else                IOpin <= "XXXX";
+      end if;
+    end process bi_proc;
+end architecture bidir_arch;
+
+```
+### Joining and Splitting Buses
+VHDL includes the concatenation operator which allows buses to be combined.  Splitting buses can be done using indexing.  
+
+```
+-- Entity
+entity bus_js is port (
+  A     : in    std_logic_vector(4 downto 0);
+  B     : in    std_logic_vector(2 downto 0);
+  X, Y  : out   std_logic;
+  Dout  : out   std_logic_vector(5 downto 0) );
+end entity bus_js;
+-- Architecture
+architecture js_arch of bus_js is
+  begin js_proc : process (A,B)  begin
+      Dout <= (B(2) & B(1) & B(0) &
+               A(2) & A(1) & A(0));
+      X <= A(3);    
+      Y <= A(4);
+  end process js_proc;
+end architecture js_arch;
+```
+
+## Modular Designs: Components, Generate and Loops in VHDL
+
+Tools provided in VHDl to make modular designs,
+* component instantiations
+* looping
+* generate blocks
+* tasks, and functions
+
+### Component Instantiations
+This is the fundamental way of building hierarchy in VHDL design.
+```
+architecture my_higher of my_upper is
+
+  component my_lower_OR port (
+    A,B : in  std_logic;
+    Z :out std_logic);
+  end component;
+
+  begin
+  my_instance_1 : my_lower_OR port map (
+    A => A_upper, B => B_upper, Z => Z_upper);
+  my_instance_2 : my_upper_OR port map ();
+  my_instance_3 : my_lower_OR port map ();
+  -- n number of instances can be used.
+
+end architecture my_higher;
+```
 
 
+* Another example of component instantiation
+```
+architecture add16_arch of add16 is
 
+  component add4 port (
+    A,B : in std_logic_vector(3 downto 0);
+    Cin : in std_logic;
+    Cout : out std_logic;
+    Sum : out std_logic_vector(3 downto 0)
+    );
+  end component;
 
+begin
+-- To create 16 bit adder we need to connect four 4 bit adders.
+
+-- 1st 4 bit adder
+add4_inst1 : add4 port map (
+  A => A(3 downto 0), B => B(3 downto 0), Z => Cin(0), Sum(3 downto 0);
+
+-- 2nd, 3rd 4 bit adders
+
+-- 4th 4 bit adder
+add4_inst4 : add4 port map (
+  A => A(15 downto 12), B => B(15 downto 12), z => Cin(3), Sum(15 downto 12));
+
+end architecture add16_arch;
+```
+### Loops in VHDL
+
+* Use to generate data or test patterns
+* In synthesis to replicate many identical circuits within `generate` block.
+
+```
+-- architecture
+
+architecture loop_arch of my_loop is begin
+
+  while (i <= 8) loop
+    if (B = '1') then
+      Z(i) <= A(i);
+    end if;
+    i := i +1;
+  end loop;
+end architecture;
+```
+### Generate block
+
+Generate blocks specifies objects to be repeated. The index of the for loop sets the number of elements to be repeated.
+```
+-- architecture
+
+architecture xorgen_arch of xorgen is begin
+
+  -- Generation of an eight bit bus
+
+  gen_process : for i in 0 to 7 generate
+    xout(i) <= Ain(i) xor Bin(i);
+  end generate gen_process;
+
+end architecture xorgen_arch;  
+```
 
 # Build and simulate ModelSim
+
 
 1. Open ModelSim and create a new project.
 2. Create new source files as required.
