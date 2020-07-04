@@ -670,7 +670,7 @@ entity regFile is
   generic (
     Dwidth : integer := 8;   -- Data Width
     Awidth : integer := 2 ); -- Address Width
-    
+
   port (
     clk, wren    : in  std_logic;  -- Clock and Write enable
     wdata        : in  std_logic_vector(Dwidth-1 downto 0);   -- Write data
@@ -1089,6 +1089,237 @@ architecture Counter_arch of Counter_tb is
         end process test_proc;
       end architecture Counter_arch;
 ```
+
+## Memory in VHDL
+
+### Implementation of a Dual Port RAM
+
+```
+--------------------------------Entity------------------------------------------
+entity DPRAM is
+  generic (
+    D_Width : integer := 8; -- Data Width
+    A_Width : integer := 10 ); -- 2**10 = 1024 different addresses
+
+  port (
+   clk, we      : in  std_logic;  --clock and Write enable
+   d            : in  std_logic_vector(D_Width-1 downto 0); -- input data
+   w_add, r_add : in  std_logic_vector(A_Width-1 downto 0); -- write address , read address
+   q          : out std_logic_vector(D_Width-1 downto 0) ); -- data output
+end entity DPRAM;
+
+-----------------------Architecture---------------------------------------------
+
+architecture DPR_Arch of DPRAM is
+   type ram_type is array (0 to 2**A_Width-1) of std_logic_vector (D_Width-1 downto 0);
+
+   impure function read_file(txt_file : in string) return ram_type is
+     file ram_file : text open read_mode is txt_file;
+     variable  txt_line  : line;
+     variable  txt_bit   : bit_vector(D_Width-1 downto 0);
+     variable  txt_ram   : ram_type;
+     begin for i in ram_type'range loop
+       readline(ram_file, txt_line);  
+       read(txt_line, txt_bit);
+       txt_ram(i)  :=  to_stdlogicvector(txt_bit);
+     end loop;   return txt_ram;
+   end function;
+
+    -- Read the ram text file from the function
+
+    signal ram      : ram_type :=  read_file("initialRAM.txt");
+    signal data_reg : std_logic_vector (D_Width-1 downto 0);
+
+    begin ram_proc : process (clk)
+       begin
+         if    (rising_edge(clk))   then  
+           if (we='1')              then  
+              ram(to_integer(unsigned(w_add)))  <= d;
+              data_reg <= ram(to_integer(unsigned(r_add))) ;
+           end if;
+         end if;
+
+         q <= data_reg ;
+    end process ram_proc;
+end architecture DPR_Arch;
+```
+
+### Implementation of ROM Memory
+```
+--------------------------------Entity------------------------------------------
+entity ROM is
+
+  generic (
+    D_Width : integer := 8;
+    A_Width : integer := 3 ); -- 2**3 = 8 addresses
+
+  port (
+   -- There is no write address since this is a Read-only-Memory
+   clk       : in  std_logic;  
+   addr      : in  std_logic_vector(A_Width-1 downto 0);
+   data      : out std_logic_vector(D_Width-1 downto 0) );
+end entity ROM;
+
+-----------------------Architecture------------------------------
+
+architecture ROm_Arch of ROM is
+
+  signal rom_d, data_reg : std_logic_vector(D_Width-1 downto 0);
+  signal addr_sel : std_logic_vector (2 downto 0); --address select
+
+begin
+   addr_sel <= addr;
+
+   rom_proc : process (clk)  begin
+      data_reg <= rom_d;    
+   end process rom_proc;
+
+------------------------- Lookup Table---------------------------------
+   lookup_proc : process  begin  
+     case(addr_sel) is
+       when "000" => rom_d <= "10000000";  
+       when "100" => rom_d <= "00000000";
+       when "001" => rom_d <= "10101010";  
+       when "101" => rom_d <= "10011001";
+       when "010" => rom_d <= "01010101";  
+       when "110" => rom_d <= "10000001";
+       when "011" => rom_d <= "10000011";  
+       when "111" => rom_d <= "11110000";
+       -- when dealing with case structure "when others" case must be defined
+       -- Because there are many other values which can be taken by a std_logic_vector (X, U, Z,...)
+       when others => rom_d <= "00000000"; -- +700 cases possible, X, U
+     end case;
+   end process lookup_proc;
+
+   data <= data_reg;
+
+end architecture ROM;
+```
+
+## Finite State Machines in VHDL
+
+Finite State Machines are always in a known state. Therefore operation of a circuit is predictable.
+
+FSMs are categorized into 2 types
+1. Moore  :  output depends on the state
+2. Mealy  :  output depends on inputs and the state  
+
+###    State Encoding Types
+
+#### Encoding  with multiple transitions
+* Binary : Binary representation corresponding to the given state, therefore there may be more than one transition between two adjacent states.
+
+#### Encoding with single transition
+* Gray : Only one bit is allowed to change in a given transition.
+```          
+state   Gray Encoding
+0        000
+1        001
+2        011
+3        010
+4        110
+5        111
+6        101
+7        100
+```
+* Johnson : Only one bit is allowed to change in a given transition and changed bit is not allowed to change again until all the bits are changed at least once.
+```          
+state   Johnson Encoding
+0        0000
+1        0001
+2        0011
+3        0111
+4        1111
+5        1110
+6        1100
+7        1000
+```
+
+* One-Hot : Like an decoder, only one bit is HIGH at a time and length of the representation is equal to the number of states
+
+```
+state   One-Hot Encoding
+0        00000001
+1        00000010
+2        00000100
+3        00001000
+4        00010000
+5        00100000
+6        01000000
+7        10000000
+```
+
+### Implementation of Finite State Machine using binary encoding
+```
+-------------------------------------Entity----------------------------------
+entity AngleFSM is
+generic (
+   S_Width : integer := 3;   -- State Width
+   An0   : std_logic_vector(3 downto 0) := "000";  
+   An45  : std_logic_vector(3 downto 0) := "001";
+   An90  : std_logic_vector(3 downto 0) := "010";
+   An135 : std_logic_vector(3 downto 0) := “011";  
+   An180 : std_logic_vector(3 downto 0) := “100";
+   An225 : std_logic_vector(3 downto 0) := “101";
+   An270 : std_logic_vector(3 downto 0) := “110";  
+   An315 : std_logic_vector(3 downto 0) := “111"  );
+
+port (
+  clk, reset , MoveCw, MoveCCW  : in  std_logic;  
+  PhyPosition                   : in  std_logic_vector(S_Width-1 downto 0);
+  DesPosition, PosError         : out std_logic_vector(S_Width-1 downto 0));
+end entity AngleFSM;
+
+------------------------------Architecture-----------------------------------
+architecture FSM_Arch of AngleFSM is
+
+    signal CurrentState, NextState : std_logic_vector (S_Width-1 downto 0);
+
+begin
+  comb_proc : process (MoveCw, MoveCCW, PhyPosition, CurrentState)  
+  begin
+  case(CurrentState) is
+      when An0 =>
+        if    (MoveCW  = '1') then NextState <= An45;
+        elsif (MoveCCW = '1') then NextState <= An315;
+        else                       NextState <= An0;
+      when An45 =>
+        if    (MoveCW  = '1') then NextState <= An90;
+        elsif (MoveCCW = '1') then NextState <= An0;
+        else
+                            |
+                            |                
+        -- Insert States An90 to An315 here
+                            |
+                            |
+      when An315 =>  --   Last State, others states
+        if    (MoveCW  = '1') then NextState <= An0;
+        elsif (MoveCCW = '1') then NextState <= An270;
+        else                       NextState <= An315;
+
+      when others =>               NextState <= An0;
+     end case;
+
+  end process comb_proc;
+
+   clk_proc : process (clk, reset)  
+   begin
+     if (reset = '1') then
+      CurrentState <= PhyPosition;
+     elsif (rising_edge(clk)) then
+      CurrentState <= NextState;
+   end process clk_proc;
+
+---------------------------------Output Logic--------------------------------
+   -- Moore Output     
+   DesPosition <= CurrentState;
+   -- Mealy Output     
+   PosError <= DesPosition - PhyPosition;
+
+end architecture FSM_Arch;
+```
+
+
 
 # Build and simulate ModelSim
 
