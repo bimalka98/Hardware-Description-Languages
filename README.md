@@ -280,7 +280,9 @@ A combination of the above three models is used to implement this.
 
 * Using `<operator>_REDUCE(std_logic_vector)` or `<operator>(std_logic_vector)`, we can reduce the std_logic_vector into a single std_logic. As an example, OR_REDUCE(V_A) will give the output, which was generated through bitwise OR over all the V_A elements.
 ```
--- Entity :  Note:  use IEEE.std_logic_misc.all;
+-- Entity :  
+Note:  use IEEE.std_logic_misc.all;
+
 entity gates is port (
   vA, vB, vC, vD  : in  std_logic_vector(3 downto 0);
   W,U,X,Y,Z       : out std_logic  );
@@ -375,7 +377,7 @@ when A = B = 0 ==> OUT =1, When A = B = 1 ==> OUT = 0.
 * If reset is 1; the state will be set to 0.
 * There is no both S and R are 1 state. It is an invalid input.
 
-* Consider only the Q when defining the Truth table. Because Q' is always the complement of the Q.
+* Consider only the Q when defining the Truth table. Because Q'(Q bar) is always the complement of the Q.
 ```
 The truth table for SR latch
 S R Q_n   Q_n+1
@@ -465,7 +467,7 @@ end architecture LArch;
 
 ```
 
-<!--------------------------------------------- Flip Flops-->
+<!------------------------------- Flip Flops-------------------------------->
 
 ### Implementation of SR Flip Flop
 
@@ -510,12 +512,11 @@ end entity DFF;
 architecture DFF_Arch of DFF is
   begin dff_proc_1 : process (clk)
     begin
-      if (rising_edge(clk))  then     -- could use (clk'event and clk='1')
-         if (reset='1') then q <=  '0';  
-                 --  Sync Reset
+      if (rising_edge(clk))  then       -- could use (clk'event and clk='1'), wait for an event to happen
+         if (reset='1') then q <= '0'; --  Sync Reset
          else                q <= d;
          end if;
-       end if;
+      end if;
   end process dff_proc_1;
 end architecture DFF_Arch;
 
@@ -538,13 +539,10 @@ end entity DFF;
 architecture DFF_Arch of DFF is
   begin dff_proc_2 : process (clk, set, reset)
     begin
-       if    (reset='1')        then  q <= '0';  
-              -- Async
+       if    (reset='1')        then  q <= '0';    -- Asynchronous Reset
        elsif (rising_edge(clk)) then
-          if    (set='0')       then  q <=  '1';
-              -- Sync
-          else                        q <=   d;  
-              -- Sync
+          if    (set='0')       then  q <=  '1';   -- Synchronous --In NAND gate implementation
+          else                        q <=   d;    -- Synchronous
           end if;
        end if;
   end process dff_proc_2;
@@ -564,11 +562,9 @@ end entity DFF;
 architecture DFF_Arch of DFF is
   begin dff_proc_3 : process (clk, ce, reset)
     begin
-       if    (reset='1')        then  q <= '0';  
-                -- Async
+       if    (reset='1')        then  q <= '0';  -- Asynchronous reset
        elsif (rising_edge(clk)) then
-          if    (ce='1')        then  q <=   d;  
-                -- Sync
+          if    (ce='1')        then  q <=   d;  -- Synchronous
           end if;
        end if;
    end process dff_proc_3;
@@ -576,7 +572,7 @@ end architecture DFF_Arch;
 
 ```
 
-<!-- New section ---------------------------------->
+<!------------------------------ New section ---------------------------------->
 ## Counters and Registers
 
 ### Data register Implementation
@@ -671,13 +667,15 @@ Register Files are useful constructs that allow addressing of registers. Each fl
 ```
 -- Entity --  use IEEE.numeric_std.all; integer conversion
 entity regFile is
-  generic (Dwidth : integer := 8;
-           Awidth : integer := 2 );
+  generic (
+    Dwidth : integer := 8;   -- Data Width
+    Awidth : integer := 2 ); -- Address Width
+    
   port (
-   clk, wren    : in  std_logic;  -- Clock and Write enable
-   wdata        : in  std_logic_vector(Dwidth-1 downto 0);   -- Write data
-   waddr, raddr : in  std_logic_vector(Awidth-1 downto 0);   -- Write address, Read address
-   rdata        : out std_logic_vector(Dwidth-1 downto 0) ); -- Read data
+    clk, wren    : in  std_logic;  -- Clock and Write enable
+    wdata        : in  std_logic_vector(Dwidth-1 downto 0);   -- Write data
+    waddr, raddr : in  std_logic_vector(Awidth-1 downto 0);   -- Write address, Read address
+    rdata        : out std_logic_vector(Dwidth-1 downto 0) ); -- Read data
 end entity regFile;
 
 -- Architecture
@@ -903,8 +901,11 @@ architecture test_arch of tb_adder is
 begin
     -- DUT(Device under test) Instantiation
     DUT : Add4 port map (
-          Data1 => a_tb,   Data2 => b_tb,
-          Cin   => Cin,    Cout  => Cout_tb, Sum => Sum_tb);
+          Data1 => a_tb,   
+          Data2 => b_tb,
+          Cin   => Cin,    
+          Cout  => Cout_tb,
+          Sum => Sum_tb);
 ----------------------------------------------------------------
 ```
 * Stimulus generating
@@ -924,7 +925,7 @@ begin
 ----------------------------------------------------------------
 ```
 
--- Stimulus
+* Stimulus generating
 2. By using loops
 ```
 ----------------------------------------------------------------
@@ -1000,11 +1001,94 @@ end architecture test_arch;
 
 The clk_gen process presented here doesn't stop generating a clock signal after a few cycles due to the wait for T/2 statement. The clock process runs forever, independently and in parallel to other processes.
 
+###  Counter Test Bench
+```
+-------------------------- Testbench Entity : No port list----------------------
+entity Counter_tb is  end entity Counter_tb;  
+
+---------------------------Testbench Architecture ------------------------------
+architecture Counter_arch of Counter_tb is
+
+  component Counter port (
+    d                    : in std_logic_vector(3 downto 0);
+    clk, reset, load, en : in std_logic;
+    q                    : out std_logic_vector(3 downto 0));
+  end component Counter;
+
+-- Variables declarations
+
+  constant delay : integer := 10; -- wait
+  constant n     : integer := 4;  -- width counter
+  constant T     : time   := 20 ns; -- clock period
+  signal   clock : std_logic := '0';  -- clock generator
+  signal   reset : std_logic := '0';  -- reset generator
+
+  signal  data_tb : std_logic_vector(n-1 downto 0) := "0000";
+  signal   load   : std_logic := '0';  -- stimulus
+  signal   en     : std_logic := '0';  -- stimulus
+  signal   q_tb   : std_logic_vector(3 downto 0);  -- output
+  signal   check  : std_logic_vector(n-1 downto 0) := "0000"; -- compare to count
 
 
+   begin
+      -- Device Under Test Instantiation
+      DUT : Counter port map (
+            d      => data_tb,   
+            clk    => clock,    
+            reset  => reset,    
+            load   => load,     
+            en     => en,  
+            q      => q_tb );
 
+-- Clock declarations, this part runs forever parallel to all the processes(an infinite loop)
+     clk_gen : process begin
+        clock <= '0';   
+        wait for T/2; --  10 nsec of 0
+        clock <= '1';
+        wait for T/2; --  10 nsec of 1, for 20 nsec period
+      end process;  
 
+-- Reset signal generation and releasing after 10 nanoseconds
+      reset <= '1', '0' after 10 ns; --  10 nsec
 
+      test_proc : process
+        variable line_o : line;
+
+      begin
+        -- Wait until some events to happen.
+        wait until falling_edge(reset); --  wait for the reset signal
+        wait until falling_edge(clock); --  wait for a clock
+
+        -- Assignment of values to variables
+        load <= '1';
+        en <= '0';
+        data_tb <= "1010";
+
+        wait until falling_edge(clock);
+
+        -- Compare whether the Q output is not equal to the defined data_tb
+        if (q_tb /= "1010") then
+          write(line_o, string'("Load fail "));
+          write(line_o, q_tb);
+          writeline(output, line_o);
+        end if;
+
+        check <= "1010";
+        load  <= '0';
+        en    <= '1';  
+        wait for 1 ns;
+
+        for i in 1 to 2**n loop
+          check <= check + 1;
+          wait until falling_edge(clock);
+          if (q_tb /= check ) then
+            report "count fail at time count" & time'image(now) & integer'image(i); -- Report to the Screen.
+          end if;
+        end loop;
+        wait;
+        end process test_proc;
+      end architecture Counter_arch;
+```
 
 # Build and simulate ModelSim
 
