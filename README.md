@@ -569,11 +569,35 @@ architecture DFF_Arch of DFF is
        end if;
    end process dff_proc_3;
 end architecture DFF_Arch;
-
 ```
 
+### Implementation of JK Flip Flop {\displaystyle Q_{\text{next}}=J{\overline {Q}}+{\overline {K}}Q}
+
+* J ---> S
+* K ---> R
+
+![JK Flip Flop](https://i1.wp.com/s3.amazonaws.com/dcaclab.wordpress/wp-content/uploads/2020/01/20202426/JK1.png?zoom=1.25&resize=682%2C351&ssl=1)
+
+Consider NAND gate implementation of an SR flip flop.
+```
+CLK S R Q_n  Q_n+1
+
+1   0 0  X    Q_n(State Preserved)
+1   0 1  X     0 (Reset Condition)
+1   1 0  X     1 (Set Condition)
+1   1 1  X   Invalid
+```
+There is one state in this SR flip flop where both S and R equal to 1, then next state of the flip flop is not defined.(Invalid). To make use of this invalid state JK Flip Flops had been introduced. First three combinations of JK Flip Flop is the same as SR flip flop.(IF THE INPUTS OF THE JK Flip Flop IS DIFFERENT THEN OUTPUT WILL BE THE VALUE OF "J") But when both J and K equal to 1, current state of the flop will be complemented.
+```
+CLK J(S) K(R)   Q_n                 Q_n+1
+
+  1   0  0        X            Q_n(State Preserved)
+  1   0  1        X            0 (Reset Condition)
+  1   1  0        X            1 (Set Condition)
+  1   1  1        X            complement(Q_n)
+```
 <!------------------------------ New section ---------------------------------->
-## Counters and Registers
+##  Registers  and Counters
 
 ### Data register Implementation
 
@@ -628,6 +652,23 @@ end architecture SREG_Arch;
 ```
 ## Binary Counter Implementation
 
+Counters can be divided into two categories.[Reference Video](https://www.youtube.com/watch?v=yqg1sqhZG3M)
+
+1. Asynchronous Counters / Ripple Counters
+* Clock is connected to only one Flip Flop and Output of the each preceding flop is connected to the clock of the next flop.
+* Circuit operates slowly as some time is needed to propagate the clock from one flop to another.
+
+2. Synchronous Counters
+* Clock is connected to all the Flip Flops and therefore all the Flops receive the same clock signal.
+* Circuit operates in the speed of the clock.
+
+Counters can also be divided into three types as `Up counters`, `Down counters` and `Up-Down counters`.
+1. [3 Bit Asynchronous Up Counter](https://www.youtube.com/watch?v=s1DSZEaCX_g)
+2. [3-Bit Synchronous Up Counter](https://www.youtube.com/watch?v=6e8oV2blkGs)
+
+JK Flip Flops can be used not only to store values but also to frequency division by cascading multiple flops through Q and clk(previous flop's Q and next flop's clk). In counters the property of toggling between states of a JK flip flop is used. Therefore all the J and K inputs are kept at HIGH(1) state. If there are n number of Flip Flops then the original clock frequency will be divided by 2**n.
+Additionally counting can be done from 0 to 2**n. At the each falling edge of the clock the state of the Flip Flop is toggled. [Negative Edge Triggered JK Flip Flop](https://www.youtube.com/watch?v=iaIu5SYmWVM)
+
 ![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/bin_counter.PNG)
 ```
 -- Entity
@@ -646,9 +687,9 @@ architecture Counter_Arch of Counter is begin
          if (load='1')       then  q  <= d;
          elsif (en='1')      then  q  <= q + 1;
 
-                -- To enable this feature, right click on the ModelSim vhd file
-                -- Then click Properties
-                -- Enable "Use 1076 - 2008"
+-- To enable this q  <= q + 1 feature, right click on the ModelSim vhd file
+-- Then click Properties
+-- Enable "Use 1076 - 2008"
 
          end if;
       end if;
@@ -1348,5 +1389,5 @@ FPGA gates are hardware and therefore executes in parallel. Not as software whic
 ## References:
 
 * Wikipedia: https://en.wikipedia.org/wiki/Flip-flop_(electronics)
-* Images: https://learnabout-electronics.org
+* Images: https://learnabout-electronics.org ; https://dcaclab.com/
 * Course content can be found at Coursera: https://www.coursera.org/learn/fpga-hardware-description-languages
