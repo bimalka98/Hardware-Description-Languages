@@ -7,17 +7,17 @@
 
 ## Hardware Description Languages(HDLs) for FPGA Design
 
-Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. Some basic concepts need to write codes in these languages are described in this repository.
+Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. Almost all the concepts need to write codes in these languages are deeply described
 
-# VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
+### VHDL (An IEEE standard / V = very high speed integrated circuit(VHSIC) / HDL = hardware description Language)
 
-## [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_1.md)
-## [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_2.md)
+#### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_1.md)
+#### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_2.md)
 
-# Verilog HDL
+### Verilog HDL
 
-## [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_3.md)
-## [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_4.md)
+#### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_3.md)
+#### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_4.md)
 
 # Build and simulate in ModelSim
 
