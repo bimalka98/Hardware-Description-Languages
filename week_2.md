@@ -1,36 +1,3 @@
-# WEEK 2
-
-### Vector Reduction in VHDL
-
-* Bitwise operation over two vectors can be done simply as (`std_logic_vector_A  <operator> std_logic_vector_B`)
-
-* Using `<operator>_REDUCE(std_logic_vector)` or `<operator>(std_logic_vector)`, we can reduce the std_logic_vector into a single std_logic. As an example, OR_REDUCE(V_A) will give the output, which was generated through bitwise OR over all the V_A elements.
-```
--- Entity :  
-Note:  use IEEE.std_logic_misc.all;
-
-entity gates is port (
-  vA, vB, vC, vD  : in  std_logic_vector(3 downto 0);
-  W,U,X,Y,Z       : out std_logic  );
-end entity gates;
- 
--- Architecture : reduction after VHDL-2008 tools
-architecture RTL of gates is
-begin
-  W  <=  AND_REDUCE(vA);  -- Vector Reduction AND
-  U  <=  NOR_REDUCE(vB);  -- Vector Reduction NOR
-  X  <=  XOR_REDUCE(vD);  -- Vector Reduction XOR
-  Y  <=  OR_REDUCE(vA) and vB(0);  -- OR Red, bit AND
-  Z  <=  OR_REDUCE(vA and vB);     -- Bit AND, OR Red
-end architecture RTL;
-
-```
-using VHDL-2008 you can use either of the following as an XOR reduction for bus A = "1011" :
-
-1. z_out <= XOR( A );
-2. z_out <= XOR_REDUCE( A );
-
-<!------------------------------------------------ New section -->
 # Synchronous and Combinational logic in VHDL.
 
 ## Combinational Logic
