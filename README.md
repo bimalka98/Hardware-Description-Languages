@@ -14,7 +14,7 @@ Hardware Description Languages are used to describe digital systems. Projects ba
 #### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_1.md)
 #### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_2.md)
 
-### Verilog HDL
+### Verilog HDL (Under Construction)
 
 #### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_3.md)
 #### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_4.md)
