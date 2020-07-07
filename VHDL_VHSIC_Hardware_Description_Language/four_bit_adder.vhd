@@ -1,7 +1,6 @@
 
 -- First Project in modelsim
 -- 20.06.2020
--- copied
 -- 4- bit adder
 
 library ieee;
@@ -12,16 +11,16 @@ use ieee.std_logic_unsigned.all;
 
 entity Add4 is
 
-port (	Data1, Data2  : 	in std_logic_vector(3 downto 0);
+port (
+    Data1, Data2  : 	in std_logic_vector(3 downto 0);
   	Cin           : 	in std_logic;
   	Cout          : 	out std_logic;
   	Sum           : 	out std_logic_vector(3 downto 0)
-	);
+	   );
 
 end entity Add4;
 
--- architecture
--- defined here
+-- architecture declarations
 
 architecture RTL of Add4 is
     signal out5bit : std_logic_vector(4 downto 0);
