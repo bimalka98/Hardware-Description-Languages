@@ -9,14 +9,14 @@
 
 Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. Almost all the concepts need to write codes in these languages are deeply described
 
-## VHDL 
+## 🔵 VHDL 
 ### (An IEEE standard/ V = Very High Speed Integrated Circuit(`VHSIC`)/ `HDL` = Hardware Description Language)
 
 #### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_1.md)
 #### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_2.md)
 
-## VerilogHDL 
-### (An IEEE standard/ Verilog = `Veri`fying `Log`ic/ / `HDL` = Hardware Description Language)
+## 🔴 VerilogHDL 
+### (An IEEE standard/ Verilog = `Veri`fying `Log`ic/ `HDL` = Hardware Description Language)
 
 #### [Part 1](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_3.md)
 #### [Part 2](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/week_4.md)
