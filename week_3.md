@@ -82,3 +82,34 @@ module COMPARATOR(input [3:0] A, B; output Y);
 endmodule
 ```
 ## Verilog Rules and Syntax; Keywords and Identifiers; Sigasi/Quartus editing
+
+### Verilog Syntax
+
+* Whitespace is ignored
+* Comments are either `//…comment here or /* comment here… */`
+* Identifiers are,
+1. words for variables
+2. function names, etc.
+* An identifier can begin with `_` or a letter and can include letters, digits, and underscores and are `CASE SENSITIVE`.
+* Keywords can’t be used as identifiers, as instances `assign, case, while, wire, reg, and, or, nand, and module`
+* Number literals are expressed this way: `3’b001`, a 3-bit number, `5’d30`, (=5’b11110), and `16‘h5ED4`, (=16’d24276).
+* In general: `size_in_bits` then `’` then `base` then `Number`
+* Underscores can be added for improved readability as in `32’h1234_5678`
+
+### Verilog values
+
+* Verilog consists of only four basic values. Almost all Verilog data types store all these values.
+1. 0 (logic zero, or false condition)
+2. 1 (logic one, or true condition)
+3. x (unknown logic value or contention) // `Represents in red color in the simulation`
+4. z (high impedance state, floating) // Allows creating tri-state buffers
+x and z have limited use for synthesis.
+
+### Verilog Data Types
+wire - A signal on a wire driven continuously by some driver
+reg - A storage element
+integer
+real
+time - Use to represent time
+parameter
+event - Something that happens in particular moment of time which can be used as a flag to launch another activity. Ex: clock edge is an event.
