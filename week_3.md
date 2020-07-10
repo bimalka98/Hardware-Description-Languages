@@ -261,3 +261,73 @@ table
 endtable
 endprimitive
 ```
+## Data Types in Verilog
+* There are only two types of data are available in verilog as `Nets` and `Registers`.
+
+### Nets
+* Represent connections between hardware elements
+* Must be driven continuously
+* Used to wire up instantiations
+* Include types `wire, wor, tri, wand`.
+
+### Registers
+* Retain the last value assigned
+* Often used to represent storage elements
+* Includes types `reg, integer`
+
+#### Integers are general-purpose variables.
+1. For synthesis used mainly as loop indexes, parameters, and constants.
+2. Implicitly of type reg, however they store data as signed numbers whereas explicitly declared reg types store them as unsigned.
+3. If they hold numbers which are not defined at compile time, their size will default to 32-bits.
+4. If they hold constants, the synthesizer adjusts them to the minimum width needed at compilation.
+#### Reg represents storage.
+1. Only reg type variable can be assigned to in an always block.
+Reg does not mean register.
+2.  It can be modeled as a wire or as a storage cell depending on context.  When used in combinational expressions in an always block, no storage is implemented.  When used in sequential statements (begin/end, if, for, case, etc.), the a latch or FF will be created.
+
+### supply0 and supply1
+supply0 and supply1 define wires tied to logic 0 (ground) and logic 1 (power), respectively.
+### Time
+Time is a 64-bit quantity that can be used in conjunction with the `$time` system task to `hold simulation time`. Time is `not supported for synthesis` and hence is used only for simulation purposes.
+### Parameters
+Parameters allows constants like word length to be defined symbolically in one place. This makes it easy to change the word length later, by changing only the parameter.
+
+```
+module bus_mux(a, b, sel, outp);
+   parameter n = 2;
+   input [n-1:0] a;
+   input [n-1:0] b;
+   input sel;
+   output outp;
+   wire [n-1:0] sel_bus;
+assign sel_bus = {n{sel}}; //replicates 2 times
+assign outp = (~sel_bus & a) | (sel_bus & b);
+
+endmodule
+```
+
+## Ports in Verilog
+* Input, Output, Inout - These keywords declare input, output and bidirectional ports of a module or task.
+* Inputs and Inouts must be Nets (wire, etc.)
+* Outputs can be Nets or Registers
+* An output port can be configured to be of type `wire, reg, wand, wor or tri`. The default is `wire`.
+* The Left Hand Side (LHS) of `procedural assignments` must be of a `Register` type.  
+* For `continuous assignments` outside of procedural blocks, LHS must be `Nets`(wires).
+
+```
+module example(a, b, e, c)
+   input a;  						// An input, defaults to a wire
+   output b, e;  				// Outputs default to wire
+   output [1:0] c;  		// 2-bit output, must be declared
+   reg [1:0] c;     		// c port declared as reg
+```
+### Buses in Verilog
+
+```
+module inverter(input [3:0] a, output [3:0] y);
+   assign y = ~a;
+endmodule
+```
+In the input of the above code the bits from most significant to least are a[3], a[2], a[1] and a[0] and can be accessed individually using indexes.
+* a[n:0] - Little-endian order, The LSB is accessed using the smallest bit number.
+* a[0:n] - Big endian order, The MSB is accessed using the smallest bit number.
