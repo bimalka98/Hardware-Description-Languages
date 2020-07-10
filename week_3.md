@@ -119,9 +119,18 @@ event - Something that happens in particular moment of time which can be used as
 * `All assignment statements outside of an always block are concurrent – they happen at the same time, and are not sequential`.
 * The output of the operation on the right hand side of the = symbol is continuously assigned to the variable on the left hand side, as in
 `assign A = B & C;  // an and gate`.
-* The variable on the LHS must be a net(like a wire), not a reg when outside of an always block.
+* The variable on the LHS must be a net(like a wire), `not a reg `when `outside of an always block`.
+* Only `reg` variables and `integers` (and their bit/part-selects and concatenations) can be placed left of the “=” in `procedures`.
 * Generally should not mix blocking and non-blocking assignment operators in the same procedure.
 
+#### Delay in Assignment (not for synthesis)
+```
+#Δt variable = expression; //Delayed assignment:
+* Execution and assignment of the results to LHS happens Δt time after the previous assignment.
+
+variable = #Δt expression; //Intra-assignment delay:
+* right side is evaluated immediately after the previous assignment but there is a delay of Δt before the result is place in the left hand assignment.
+```
 
 #### 1. Assignments – Procedural(blocking)(`=`)
 * Procedural (blocking) assignments (`=`) are `done sequentially` in the order the statements are written. A second assignment will not start until the preceding one is completed. Therefore the order of assignment statements matters.
@@ -134,7 +143,7 @@ always @( posedge clk) // always at positive edge of the clock
 	Q1=D; Q2=Q1; //single or parallel ff. (Both Q1 and Q2 holds the same value as D.)
 	end
 ```
-#### 2. Assignments - Non blocking(`<=`)
+#### 2. Assignments - Non blocking(`<=`)/(RTL)
 * RTL (nonblocking) assignments (<=), which follow each other in the code, are `started in parallel`. The right hand side of nonblocking assignments is evaluated starting from the completion of the last blocking assignment or if none, the start of the procedure. The `transfer to the left hand side is made according to the delays`. An intra-assignment delay in a nonblocking statement will not delay the start of any subsequent statement blocking or nonblocking.
 * “<=” best mimics what physical flip-flops do; use it only for “always @ (posedge clk ..) type procedures describing `sequential circuits`.
 ```
@@ -306,8 +315,8 @@ assign outp = (~sel_bus & a) | (sel_bus & b);
 endmodule
 ```
 
-## Ports in Verilog
-* Input, Output, Inout - These keywords declare input, output and bidirectional ports of a module or task.
+## Ports in Verilog - `Input, Output, Inout`
+* `Input, Output, Inout` - These keywords declare input, output and bidirectional ports of a module or task.
 * Inputs and Inouts must be Nets (wire, etc.)
 * Outputs can be Nets or Registers
 * An output port can be configured to be of type `wire, reg, wand, wor or tri`. The default is `wire`.
@@ -336,14 +345,20 @@ In the input of the above code the bits from most significant to least are a[3],
 
 ## Module declaration
 
-Structure of a module is given below.
-```
-module module_name(port_list);
+Structure of a simple module is given below.
 
-I. 			Port declarations
-II. 		Variable definitions
+```
+module module_name(port_list); // Module name and the port list (arguments)
+
+I. 			Port declarations 		 // the i/o type (input, output or inout) and width of each port. The default port width is 1 bit.
+						input 	[msb:lsb] input_port_list;
+						output 	[msb:lsb] output_port_list;
+						inout		[msb:lsb] inout_port_list;
+II. 		Variable definitions   // the port variables must be declared (wire, wand,. . ., reg.) The default is wire.
+						wire wire_variable = value;
 III. 		Parameters
-IV.			Data Flow statements (assign …)
+IV.			Data Flow statements (assign …) // done with an explicit "assign" statement or by assigning a value to a wire during its declaration.
+						assign wire_variable = expression;
 V. 			Module Instantiations
 VI. 		Behavioral Blocks (begin…end)
 VII. 		Tasks or Functions
@@ -351,21 +366,14 @@ VIII. 	Timing Specifications
 
 endmodule // No semicolon at the end, like in VHDL
 ```
-## Module Instantiation
-There are two ways to instantiate a module. Consider the following  fulladd4 module.
-```
-module fulladd4(SUM, C_OUT, A, B, C_IN);
-reg [3:0] A, B;   // top level signals in caps
-reg C_IN;
-wire [3:0] SUM;
-wire C_OUT;
+## Module Instantiation <!--- page 12 introduction to Verilog-->
+* Module declarations(top-level modules) are the templates that are used to create actual objects (instantiations).
+* There are two ways to instantiate a top-level module.
 
-```
 1. By using ordered port lists(this must follow the original module's port list order)
 `fulladd4 faordered(SUM, C_OUT, A, B, C_IN);`
 2. By port names which don’t need to follow the module order. Therefore if there is any swapping in the order of the ports, it does not affect the
-`fulladd4 fa_name(.sum(SUM), .c_out(C_OUT),.a(A),.b(B), .cin(C_IN));`
-
+`fulladd4 fa_name(.sum(SUM), .c_out(C_OUT),.a(A),.b(B), .cin(C_IN)); //“ .template_port_name (name_of_wire_connected_to_port)”`
 
 Example:
 ```
@@ -390,4 +398,29 @@ module mux4(a, b, c, d, sel, y);
    mux2  highmux(c, d, sel[0], high);
    mux2  outmux(low, high, sel[1], y);
 endmodule
+```
+### Parametrized modules
+Following syntax can be used to change the parameter values inside an instantiation, which were defined in the top-level module
+
+* Syntax
+```
+module_name #(1st_parameter_values,2nd_parm_value, ...) instance_name(port_connection_list); // At the place of instantiation
+
+defparm instance_name.parameter = parameter_value; // Before the instantiation using defparm keyword(Not supported in synthesis)
+module_name instance_name(port_connection_list);
+```
+* Example
+```
+// MODULE DEFINITION
+module shift_n (it, ot); // used in module test_shift.
+input [7:0] it; output [7:0] ot;
+parameter n = 2; // default value of n is 2
+assign ot = (it << n); // it shifted left n times
+endmodule
+
+// PARAMETERIZED INSTANTIATIONS
+wire [7:0] in1, ot1, ot2, ot3;
+shift_n shft2(in1, ot1), // shift by 2; default
+shift_n #(3) shft3(in1, ot2); // shift by 3; override parameter 2.
+shift_n #(5) shft5(in1, ot3); // shift by 5; override parameter 2.
 ```
