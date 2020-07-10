@@ -331,3 +331,63 @@ endmodule
 In the input of the above code the bits from most significant to least are a[3], a[2], a[1] and a[0] and can be accessed individually using indexes.
 * a[n:0] - Little-endian order, The LSB is accessed using the smallest bit number.
 * a[0:n] - Big endian order, The MSB is accessed using the smallest bit number.
+
+# Verilog Structure
+
+## Module declaration
+
+Structure of a module is given below.
+```
+module module_name(port_list);
+
+I. 			Port declarations
+II. 		Variable definitions
+III. 		Parameters
+IV.			Data Flow statements (assign …)
+V. 			Module Instantiations
+VI. 		Behavioral Blocks (begin…end)
+VII. 		Tasks or Functions
+VIII. 	Timing Specifications
+
+endmodule // No semicolon at the end, like in VHDL
+```
+## Module Instantiation
+There are two ways to instantiate a module. Consider the following  fulladd4 module.
+```
+module fulladd4(SUM, C_OUT, A, B, C_IN);
+reg [3:0] A, B;   // top level signals in caps
+reg C_IN;
+wire [3:0] SUM;
+wire C_OUT;
+
+```
+1. By using ordered port lists(this must follow the original module's port list order)
+`fulladd4 faordered(SUM, C_OUT, A, B, C_IN);`
+2. By port names which don’t need to follow the module order. Therefore if there is any swapping in the order of the ports, it does not affect the
+`fulladd4 fa_name(.sum(SUM), .c_out(C_OUT),.a(A),.b(B), .cin(C_IN));`
+
+
+Example:
+```
+// Original module declaration: 2 input multiplexer
+module mux2(a, b, sel, y);
+   input [3:0] a, b;
+   input sel;
+   output [3:0] y;
+
+   assign y = sel ? b : a;
+endmodule
+
+// 4 inputs multiplexer through module instantiation
+module mux4(a, b, c, d, sel, y);
+   input [3:0] a, b, c, d;
+   input sel[1:0];
+   output [3:0] y;
+
+   wire[3:0] low, high; // Connection between the two 2-input multiplexers
+
+   mux2  lowmux(a, b, sel[0], low); // Original_module_name | label | port_list(according to on of the above mentioned methods)
+   mux2  highmux(c, d, sel[0], high);
+   mux2  outmux(low, high, sel[1], y);
+endmodule
+```
