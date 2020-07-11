@@ -367,19 +367,19 @@ Structure of a simple module is given below.
 ```
 module module_name(port_list); // Module name and the port list (arguments)
 
-I. 			Port declarations 		 // the i/o type (input, output or inout) and width of each port. The default port width is 1 bit.
-						input 	[msb:lsb] input_port_list;
-						output 	[msb:lsb] output_port_list;
-						inout		[msb:lsb] inout_port_list;
-II. 		Variable definitions   // the port variables must be declared (wire, wand,. . ., reg.) The default is wire.
-						wire wire_variable = value;
-III. 		Parameters
-IV.			Data Flow statements (assign …) // done with an explicit "assign" statement or by assigning a value to a wire during its declaration.
-						assign wire_variable = expression;
-V. 			Module Instantiations
-VI. 		Behavioral Blocks (begin…end)
-VII. 		Tasks or Functions
-VIII. 	Timing Specifications
+I. Port declarations 		 // the i/o type (input, output or inout) and width of each port. The default port width is 1 bit.
+	input 	[msb:lsb] input_port_list;
+	output 	[msb:lsb] output_port_list;
+	inout	[msb:lsb] inout_port_list;
+II. Variable definitions   // the port variables must be declared (wire, wand,. . ., reg.) The default is wire.
+	wire wire_variable = value;
+III. Parameters
+IV.Data Flow statements (assign …) // done with an explicit "assign" statement or by assigning a value to a wire during its declaration.
+	assign wire_variable = expression;
+V. Module Instantiations
+VI. Behavioral Blocks (begin…end)
+VII. Tasks or Functions
+VIII. Timing Specifications
 
 endmodule // No semicolon at the end, like in VHDL
 ```
