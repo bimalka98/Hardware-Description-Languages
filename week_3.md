@@ -106,13 +106,13 @@ endmodule
 x and z have limited use for synthesis.
 
 ### Verilog Data Types
-wire - A signal on a wire driven continuously by some driver
-reg - A storage element
-integer
-real
-time - Use to represent time
-parameter
-event - Something that happens in particular moment of time which can be used as a flag to launch another activity. Ex: clock edge is an event.
+* wire - A signal on a wire driven continuously by some driver
+* reg - A storage element
+* integer
+* real
+* time - Use to represent time
+* parameter
+* event - Something that happens in particular moment of time which can be used as a flag to launch another activity. Ex: clock edge is an event.
 
 ### Verilog Assignments
 * The fundamental statement in Verilog is the assignment statement.
@@ -124,13 +124,30 @@ event - Something that happens in particular moment of time which can be used as
 * Generally should not mix blocking and non-blocking assignment operators in the same procedure.
 
 #### Delay in Assignment (not for synthesis)
-```
-#Δt variable = expression; //Delayed assignment:
+
+1. #Δt variable = expression; //Delayed assignment:
 * Execution and assignment of the results to LHS happens Δt time after the previous assignment.
 
-variable = #Δt expression; //Intra-assignment delay:
+2. variable = #Δt expression; //Intra-assignment delay:
 * right side is evaluated immediately after the previous assignment but there is a delay of Δt before the result is place in the left hand assignment.
+
+Following example is for simulation purposes only. Blocking(procedural"=") and Non-blocking("<=") assignment should not be mixed in a synthesis.
+[Reference](https://www.cs.upc.edu/~jordicf/Teaching/secretsofhardware/VerilogIntroduction_Nyasulu.pdf)
 ```
+For simulation only
+
+initial begin
+a=1; b=2; c=3; x=4; //Variable declaration
+
+#5 a = b + c; 			// wait for 5 units, then grab b, c and execute a=2+3. now time is 5 units from the beginning.
+d = a;							// Time continues from last line, d=5 = b + c at t=5.
+x <= #6 b + c;			// grab b+c now at t=5, don’t stop, make x=5 at t=11.
+b <= #2 a; 					// grab a at t=5 (end of last blocking statement). Deliver b=5 at t=7. previous x is unaffected by b change.
+y <= #1 b + c;			// grab b+c at t=5, don’t stop, make y=5 at t=6.
+#3 z = b + c; 			// grab b+c at t=8 (#5+#3), make z=5 at t=8. Intra-assignment delays are not counted.
+w <=x 							// make w=4 at t=8. Starting at last blocking assignment. Because x is not changed until t = 11.
+```
+
 
 #### 1. Assignments – Procedural(blocking)(`=`)
 * Procedural (blocking) assignments (`=`) are `done sequentially` in the order the statements are written. A second assignment will not start until the preceding one is completed. Therefore the order of assignment statements matters.
@@ -341,7 +358,7 @@ In the input of the above code the bits from most significant to least are a[3],
 * a[n:0] - Little-endian order, The LSB is accessed using the smallest bit number.
 * a[0:n] - Big endian order, The MSB is accessed using the smallest bit number.
 
-# Verilog Structure
+# Verilog Structures
 
 ## Module declaration
 
@@ -423,4 +440,66 @@ wire [7:0] in1, ot1, ot2, ot3;
 shift_n shft2(in1, ot1), // shift by 2; default
 shift_n #(3) shft3(in1, ot2); // shift by 3; override parameter 2.
 shift_n #(5) shft5(in1, ot3); // shift by 5; override parameter 2.
+```
+## begin - end block<!--page 15 intro to Verilog-->
+This begin - and  block is used to group several statements, where only one statement is syntactically correct. As an example if there are more than one statement under a `for, case, while, if` like structures, This begin-end block must be used to group those statements. If there is only one statement, begin-end block can be omitted.
+
+## for loops
+Syntax is similar to that of C/C++ for loops. Begin-end block can be omitted if there is only one statement
+```
+for (count = value1; count </<=/>/>= value2; count = count +/- step)
+begin
+... statements ...
+end
+```
+## while loops
+What is inside the loop is executed repeatedly until the conditional expression is evaluated to be false. Begin-end block can be omitted if there is only one statement.
+```
+while (expression)
+begin
+... statements ...
+end
+```
+## forever Loops
+An infinite loop.  Begin-end block can be omitted if there is only one statement.
+```
+forever
+begin
+... statements ...
+end
+```
+## if-else if-else
+If all possibilities are not specifically covered, synthesis will generated extra latches.
+```
+if (expression)
+begin
+... statements ...
+end
+else if (expression)
+begin
+... statements ...
+end
+...more else if blocks ...
+else
+begin
+... statements ...
+end
+```
+## case
+```
+case (expression)
+case_choice1:
+begin
+... statements ...
+end
+case_choice2:
+begin
+... statements ...
+end
+... more case choices blocks ...
+default:
+begin
+... statements ...
+end
+endcase
 ```
