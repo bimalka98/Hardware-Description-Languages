@@ -161,7 +161,7 @@ always @( posedge clk) // always at positive edge of the clock
 	end
 ```
 #### 2. Assignments - Non blocking(`<=`)/(RTL)
-* RTL (nonblocking) assignments (<=), which follow each other in the code, are `started in parallel`. The right hand side of nonblocking assignments is evaluated starting from the completion of the last blocking assignment or if none, the start of the procedure. The `transfer to the left hand side is made according to the delays`. An intra-assignment delay in a nonblocking statement will not delay the start of any subsequent statement blocking or nonblocking.
+* RTL (nonblocking) assignments (<=), which follow each other in the code,  `start in parallel`. The right hand side of nonblocking assignments is evaluated starting from the completion of the last blocking assignment or if none, the start of the procedure. The `transfer to the left hand side is made according to the delays`. An intra-assignment delay in a nonblocking statement will not delay the start of any subsequent statement blocking or nonblocking.
 * “<=” best mimics what physical flip-flops do; use it only for “always @ (posedge clk ..) type procedures describing `sequential circuits`.
 ```
 Using nonblocking statements, the intent of the previous example to create a shift register is preserved no matter the order.
