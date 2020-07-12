@@ -49,7 +49,10 @@ endmodule
 ```
 ## Procedural Combinational Logic with Always Procedures
 
-* When if- else if block is used declarations of an `else` statement is essential in order to eliminate the generation of unwanted latches. That is outputs must be defined for each possible input.
+* When if- else if block is used declarations of an `else` statement is essential in order to eliminate the generation of unwanted latches(refer following figure). That is outputs must be defined for each possible input.
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/unintentional_latch.jpg)
+
 * `always` block is executed whenever there is a change in the signals  in the sensitivity list.
 * In the following example non-blocking assignment operators are used. Blocking assignment operators could have been used.
 * But mix of non-blocking and blocking assignment operators is not allowed.

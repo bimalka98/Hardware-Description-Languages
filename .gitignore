@@ -5,6 +5,7 @@
 # Whitelist the file you're interested in.
 !*.vhd
 !*.png
+!*.jpg
 !*.vhdp
 !*.out
 !*.md
