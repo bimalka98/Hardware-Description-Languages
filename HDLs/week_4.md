@@ -1,4 +1,4 @@
-# Combinatorial Circuits
+qfd# Combinatorial Circuits
 
 ## Gate level modeling using bitwise operators and  concurrent assignments
 
@@ -81,3 +81,82 @@ endmodule
 
 ```
 [Reference](https://www.physi.uni-heidelberg.de/~angelov/VHDL/VHDL_SS09_Teil10.pdf)
+
+# Synchronous Circuits
+Naming Convention
+* q   : output
+* ldc : latch; d type; clear
+* fda : flip flop; d type; asynchronous
+* fds : flip flop; d type; synchronous
+* fd  : flip flop; d type;
+
+## D Latch
+```
+// D latches
+//
+module DLatches ( d, clk, aclr, qldc, qld);
+   input d, clk, aclr;
+   output reg qldc, qld; // outputs must be registers.
+
+   /* Synchronous D latch */
+   always @(clk or d)   // no posedge!.Therefore this program generates a level sensitive circuit.
+   begin
+      if (clk == 1) qld <= d;
+   end
+
+   /* Asynchronous D latch */
+   always @(clk or d or aclr)   // "or" in between items doesn't imply any logical operation. They are used only to separate the items.
+   // note d is on the sensitivity list
+   begin
+      if (aclr == 1) qldc <= 0; // Check if the asynchronous clear signal is given.
+      else if (clk == 1) qldc <= d;
+   end
+endmodule
+
+```
+## D Flip Flops
+```
+// D Flip Flops
+//
+module DFF (d, clk, clr, reset, qfd, qfda, qfds);
+   input d, clk, clr, reset;
+   output reg qfd, qfda, qfds; // Output registers for Normal; Asynchronous; Synchronous Flip Flops.
+   ----------------------------------
+   always @(posedge clk)   // with posedge!
+   begin
+    qfd <= d;  //standard FF
+
+    if (reset == 0) qfds <= 0;
+    else qfds <= d;  // FF with sync reset  
+   end
+   ---------------------------------
+   always @(posedge clk or negedge clr)   //Operate at the negative edge of the clear
+   begin
+      if (clr == 0) qfda <= 0;
+      else qfda <= d; // FF with async reset
+   end
+endmodule
+
+```
+## D Flip Flops with clock Enable
+```
+// D Flip Flops with clock enable
+//
+module DFFe (d, clk, ce, clr, reset, qfda, qfds);
+   input d, clk, ce, clr, reset;
+   output reg qfd, qfda, qfds;
+   ---------------------------------
+   always @(posedge clk)   // FF with sync reset & clk enable
+   begin
+    if (reset == 1) qfds <= 0;
+    else if (ce == 1) qfds <= d;
+   end
+   ---------------------------------
+   always @(posedge clk or posedge clr)   // FF with async reset & clk enable.
+   begin                                  // Operate at positive edge of the clear
+      if (clr == 1) qfda <= 0;
+      else if (ce == 1) qfda <= d;
+   end
+endmodule
+
+```
