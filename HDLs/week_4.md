@@ -160,3 +160,93 @@ module DFFe (d, clk, ce, clr, reset, qfda, qfds);
 endmodule
 
 ```
+## Registers
+Registers are used to store some value. In this implementation in verilog although there is no `else` statement associated with the `if block`, no unnecessary latch will be synthesized. Because according to the rule in Verilog, if there is no `active assignment` to the output of some circuit, output will remain in its previous value(memory state).
+ ```
+// Data Register
+//
+module Dreg (
+  input wire [3:0] d, //width of the register is defined here as 4 bits.
+  input wire clk, reset, load,
+  output reg [3:0] q
+  );
+
+  always @(posedge clk or negedge reset)  
+  begin
+    if (!reset)   // Asynchronous reset
+      q <= 0;
+    else if (load == 1)
+      q <= d;
+  end             //Note  that there is no else statement!
+endmodule
+
+```
+## Shift Registers
+One method of creating a shift register is given below. But in addition to that the same desired circuit can be obtained by using a for loop and array indexing. In this example the purpose is served using left shift operator.
+```
+// Shift Register
+//
+module Shifter (clk, reset, D0, shift, Q);
+  input clk, reset, D0, shift;
+  output reg [3:0] Q;
+  always @(posedge clk)  
+  begin
+    if (!reset)
+      Q <= 4’b0000;
+
+    else if (shift == 1)
+    begin       
+      Q <= Q << 1;
+      Q[0] <= D0;
+    end
+
+    else ;   
+  end
+endmodule
+
+```
+## Counters
+```
+// Binary Counter
+//
+module Counter (
+  input wire [3:0] d,
+  input wire clk, reset, load, en,
+  output reg [3:0] q
+  );
+  always @(posedge clk)  
+  begin
+    if (reset)  // synchronous reset
+      q <= 0;
+    else if (load == 1’b1)  // To initialize the count from a user defined value.
+      q <= d;
+    else if (en == 1’b1)    // Counter is incremented whenever there is the enable signal.
+      q <= q + 1;
+  end // Note there is no else statement. This implies that output will remain unchanged in every other possible Situation.
+endmodule
+
+```
+## Register File Implementation
+```
+// Data Register File
+// 4 x 8
+module regFile #(
+  parameter Dwidth = 8, // #bits in a word
+            Awidth = 2  // #bits in an address
+  )
+  (
+    input wire clk, wren,
+    input wire [(Dwidth - 1):0] wdata,
+    input wire [(Awidth1 - 1):0] waddr, raddr,
+    output wire [(Dwidth - 1):0] rdata
+  );
+  // Signal Declaration
+  reg [(Dwidth - 1):0] array_reg [(2**Awidth-1):0];
+
+  always @(posedge clk)  
+    if (wren)  // synchronous enable
+      array_reg[waddr] <= wdata;
+  assign rdata = array_reg[raddr];
+endmodule
+
+```
