@@ -649,10 +649,6 @@ FSMs are categorized in to two main categories.
 For more information about Encoding Types [visit](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/HDLs/week_2.md#state-encoding-types)
 * If there is more than twenty states then `One-Hot encoding` will be the best.
 * Otherwise `gray`, `Johnson` encodings will be ideal as there is only one bit change in two adjacent states, its less error prone.
-<!--
-[1]  D. Smith, “Modeling Finite State Machines” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 8, pp. 195-201.  
- -- >
- 
 ```
 module AngleFSM
 #(  // Binary encoding of states
@@ -729,3 +725,4 @@ module AngleFSM
 endmodule
 
 ```
+<!--[1]  D. Smith, “Modeling Finite State Machines” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 8, pp. 195-201.  -- >
