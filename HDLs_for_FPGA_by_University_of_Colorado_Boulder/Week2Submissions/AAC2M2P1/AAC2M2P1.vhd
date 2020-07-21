@@ -58,7 +58,7 @@ sync_counter : process(CP, SR, P, PE, CEP, CET)
     elsif ((PE = '0') and rising_edge(CP)) then Q <= P;
     elsif (CEP = '1' and CET = '1' and PE = '1')  and rising_edge(CP) then Q <= Q + 1;
     end if;
-
+    
   end process sync_counter;
 end sync_bin_counter;
 --------------------------------------------------------------------------------

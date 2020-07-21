@@ -7,7 +7,9 @@
 
 ## Hardware Description Languages(HDLs) for FPGA Design
 
-Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. Almost all the concepts need to write codes in these languages are deeply described
+Hardware Description Languages are used to describe digital systems. Projects based on  `V-HDL(VHSIC-HDL)` and `Verilog-HDL`  languages are included in this repository. 
+
+![](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/Figures/comp.png)
 
 ## 🔴 VHDL
 ### (An IEEE standard/ V = Very High Speed Integrated Circuit(`VHSIC`)/ `HDL` = Hardware Description Language)
