@@ -651,8 +651,8 @@ For more information about Encoding Types [visit](https://github.com/bimalka98/D
 * Otherwise `gray`, `Johnson` encodings will be ideal as there is only one bit change in two adjacent states, its less error prone.
 <!--
 [1]  D. Smith, “Modeling Finite State Machines” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 8, pp. 195-201.  
-
  -- >
+ 
 ```
 module AngleFSM
 #(  // Binary encoding of states
