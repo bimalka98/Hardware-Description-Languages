@@ -467,3 +467,265 @@ assert_label:
      end
 
 ```
+## Test bench for a counter
+<!--
+[1] Pong P. Chu, “Regular Sequential Circuit” in Embedded SOPC Design with NIOS II Processor and Verilog Examples, Hoboken, NJ, Wiley, 2012, ch. 5, sec. 5.2, pp. 107-110
+
+[2]  D. Smith, “Test Harnesses” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 11, pp. 323-344.  
+
+---->
+```
+timescale 1 ns / 1 ps   // set timescale to nanoseconds, ps precision Testbench entity declaration
+
+module Counter_tb();  // top level, no external ports
+
+//constant declarations   
+  parameter delay = 10; //ns  defines the wait period.
+  localparam n = 4;     // width of counter in bits
+  localparam T = 20;    // clock period
+
+----------------------------------------------------------------
+//  signal declarations
+  reg clock = 0;    //clock if needed, from generator model
+  reg reset = 0;    // reset if needed  
+  reg [n-1:0] data_tb = 4'b0000;  // data input stimulus
+  reg load = 0, en = 0;   // input stimulus
+  wire [3:0] q;  // output to check
+  reg [n-1:0] checkcount= 4'b0000;// variable to compare to count
+----------------------------------------------------------------
+// Component Instances
+// instantiate the device under test
+Counter DUT (     // Device under Test
+        // Inputs
+       .d(data_tb),
+       .clk(clock),
+       .reset(reset),
+       .load(load),
+       .en(en),
+         // Outputs
+       .q(q)
+        );  
+-----------------------------------------------------------------
+// External Device Simulation Processes
+
+// clock driver continuously executed during simulation
+  always
+  begin
+    clock = 1'b1;
+    #(T/2);
+    clock = 1'b0;
+    #(T/2);
+  end  
+ 
+// reset driver executed only once at the beginning of the simulation
+  initial
+  begin
+    reset = 1'b1; // Active for a half of the period T
+    #(T/2);
+    reset = 1'b0; // Inactive forever
+  end
+----------------------------------------------------------------
+// Test Process
+  initial    // test generation process
+  begin
+    @(negedge reset) // wait for reset inactive
+    @(negedge clock) // wait for one clock
+
+  // *****************Test load*****************
+    load = 1'b1;
+    en = 1'b0;
+    data_tb = 4'b1010;
+
+    @(negedge clock) // wait for one clock
+    if (q != 4'b1010)
+      $display("Load failure %b", q);
+
+  // *****************Test count******************
+    checkcount = 4'b1010;  // compare variable
+    load = 1'b0;   
+    en = 1'b1;
+
+    repeat (2**n)
+    begin
+      checkcount = checkcount + 1;   // count
+      @(negedge clock) // wait for one clock
+      if (q != checkcount)
+      $display("Count failure at time %g/t at count %b", $time, q);      
+    end
+----------------------------------------------------------------                 
+    $stop;   // end simulation
+  end
+endmodule
+```
+# Memory Implementation in Verilog
+<!--
+[1]  D. Smith, “Test Harnesses” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 11, pp. 323-344.  
+
+[2] Pong P. Chu, “Regular Sequential Circuit” in Embedded SOPC Design with NIOS II Processor and Verilog Examples, Hoboken, NJ, Wiley, 2012, ch. 5, sec. 5.2, pp. 100-102
+
+[3] Pong P. Chu, “Regular Sequential Circuit” in Embedded SOPC Design with NIOS II Processor and Verilog Examples, Hoboken, NJ, Wiley, 2012, ch. 5, sec. 5.7, pp. 124-131
+
+-->
+## Dual port RAM
+```
+module DPRAM
+#(
+  parameter Data_width = 8,  // # of bits in word
+            Addr_width = 10  // # of address bits
+  )
+  (  //ports
+    input wire clk,
+    input wire we,
+    input wire [(Addr_width-1):0] w_addr, r_addr,
+    input wire [(Data_width-1):0] d,
+    output wire [(Data_width-1):0] q
+  );
+
+  // signal declarations
+    reg [Data_width-1:0] ram [2**Addr_width-1:0]; // 2 dimensional array for RAM storage
+    reg [Data_width-1:0] data_reg; // read output reg.
+     
+    // RAM initialization from an external file
+    initial
+    $readmemh(“initalRAM.txt”, ram);
+
+    //  write operation
+    always @(posedge clk)
+    begin
+      if (we)
+        ram[w_addr] <= d;    // write data
+        data_reg <= ram[r_addr]; // read data to reg
+    end
+         
+    // read operation
+    assign q = data_reg;
+
+endmodule
+```
+## ROM
+```
+module ROM
+#(
+  parameter Data_width = 8, // # of bits in word
+            Addr_width = 3  // # of address bits
+  )
+  (  //ports
+    input wire clk,
+    input wire [Addr_width-1:0] addr,
+    output wire [Data_width-1:0] data
+  );
+ 
+// signal declarations
+reg [Data_width-1:0] rom_data, data_reg;
+
+// body
+ always @(posedge clk)  // output register
+   data_reg <= rom_data;
+ 
+ always @*  // * indicates that all the inputs are in the sensitivity list
+  case(addr)  // lookup table
+        3’b000:  rom_data = 8’b1000_0000;
+        3’b001:  rom_data = 8’b1010_1010;
+        3’b010:  rom_data = 8’b0101_0101;
+        3’b011:  rom_data = 8’b1000_0011;
+        3’b100:  rom_data = 8’b0000_0000;
+        3’b101:  rom_data = 8’b1001_1001;
+        3’b110:  rom_data = 8’b1000_0001;
+        3’b111:  rom_data = 8’b1111_0000;
+  endcase
+ 
+ assign data = data_reg;
+endmodule
+
+```
+## Finite State Machines
+Finite State Machines (FSM) are a very important part of digital design (and software design, too!). The state machine concept provides a highly reliable, maintainable, and methodical way to design circuits that perform a sequence of operations with great predictability. Because state machines are always in a known state.
+
+FSMs are categorized in to two main categories.
+1. Moore: Output only depends on the state
+2. Mealy: Inputs and the state drive the output
+
+### Implementation of a FSM with Binary Encoding
+For more information about Encoding Types [visit](https://github.com/bimalka98/Digital-Designs-with-FPGA/blob/master/HDLs/week_2.md#state-encoding-types)
+* If there is more than twenty states then `One-Hot encoding` will be the best.
+* Otherwise `gray`, `Johnson` encodings will be ideal as there is only one bit change in two adjacent states, its less error prone.
+<!--
+[1]  D. Smith, “Modeling Finite State Machines” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 8, pp. 195-201.  
+
+ -- >
+```
+module AngleFSM
+#(  // Binary encoding of states
+  parameter State_width = 3,
+            An0 = 3'b000,  
+            An45 = 3'b001,
+            An90 = 3'b010,
+            An135 = 3'b011,
+            An180 = 3'b100,
+            An225 = 3'b101,
+            An270 = 3'b110,
+            An315 = 3'b111)
+  (  //ports
+    input wire clk, reset, MoveCW, MoveCCW,
+    input wire [(State_width-1):0] PhysicalPosition,
+    output wire [(State_width-1):0] DesiredPosition, PosError
+  );
+  reg [(State_width-1):0] CurrentState, NextState;
+------------------------------------------------------------------------------
+
+// body of FSM is  a case statement
+// Next State Logic
+
+  always @(MoveCW or MoveCCW or PhysicalPosition or CurrentState)
+    begin: Combinational
+      case (CurrentState)
+
+        An0:
+          if (MoveCW ==1)
+            NextState = An45;
+          else if (MoveCCW == 1)
+            NextState = An315;
+          else
+            NextState = An0;
+
+        An45:
+            if (MoveCW ==1)
+              NextState = An90;
+            else if (MoveCCW == 1)
+              NextState = An0;
+            else
+              NextState = An45;
+
+        ...  //states An90 to An270 here
+
+        An315:
+            if (MoveCW ==1)
+              NextState = An0;
+            else if (MoveCCW == 1)
+              NextState = An270;
+            else
+              NextState = An315;
+        default: // To make sure there will be no unwanted latches
+          NextState = PhysicalPosition;
+      endcase
+    end
+------------------------------------------------------------------------------
+
+// Current State Register
+  always @(posedge clk or negedge reset)
+    begin: Sequential
+      if (!reset)
+        CurrentState = PhysicalPosition;
+      else
+        CurrentState = NextState;
+    end
+------------------------------------------------------------------------------
+
+// Output Logic ( Given circuit may have Moore, Mealy or both.)
+
+  assign DesiredPosition = CurrentState; // Moore Outputs
+  assign PosError = DesiredPosition - PhysicalPosition; // Mealy Outputs
+ 
+endmodule
+
+```
