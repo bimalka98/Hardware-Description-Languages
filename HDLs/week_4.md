@@ -1,4 +1,4 @@
-qfd# Combinatorial Circuits
+# Combinatorial Circuits
 
 ## Gate level modeling using bitwise operators and  concurrent assignments
 
@@ -248,5 +248,222 @@ module regFile #(
       array_reg[waddr] <= wdata;
   assign rdata = array_reg[raddr];
 endmodule
+
+```
+## Tri-state Buses
+Both assign statements in the following code will generate the same circuit. However the first one will handle each possible input for `OE` pin and therefore will be ideal for simulation.
+```
+module Tri (
+  input wire [3:0] Dout,
+  input wire OE,
+  output wire [3:0] Pinout
+  );
+  assign Pinout = (OE == 1) ? Dout : (OE == 0) ? 4'bz : 4'bx;
+  // assign Pinout = OE ? Dout : 4'bz;
+endmodule
+```
+## Bi-directional Buses
+The I/O structure of the FPGA allows to create Bi-directional buses, in which the external pin can be treated as either an input or an output, depending on the state of the enable signal.
+
+```
+module BiDir (
+  output wire [3:0] Din,
+  input wire [3:0] Dout,
+  input wire OE,
+  inout wire [3:0] IOpin
+  );
+  assign Din = IOpin;
+  assign IOpin = (OE == 1) ? Dout :
+                 (OE == 0) ? 4'bz : 4'bx;
+endmodule
+```
+## Joining and Splitting Buses
+```
+module BusMe (
+  input wire [4:0] A,
+  input wire [2:0] B,
+  output wire X,Y,
+  output wire [5:0] Dout
+  );
+  assign Dout = {B,A[2:0]}; // Joining buses
+  assign X = A[3]; // Splitting buses
+  assign Y = A[4];
+endmodule
+
+```
+# Modular Design in Verilog
+## Component Instantiation
+A modular design in Verilog at the top level oftentimes consists only of component instantiations, the fundamental way to build hierarchy in a design can be given as follows.
+```
+module module_name_top (port list)
+
+  template_name instance_name_1 (port connection list),
+  template_name instance_name_2 (port connection list),
+  .......
+  template_name instance_name_n (port connection list);
+
+endmodule
+----------------------------------------------------------------
+//  16-bit Adder built with 4 instantiations of 4-bit Adders
+module Add16_top (
+  input [15:0] A,
+  input [15:0] B,
+  input Cin,
+  output Cout,
+  output [15:0] Sum
+);
+
+  wire Cin2, Cin3, Cin4; // To make the connection between 4 instantiations.
+  add4 add4_1 (.Data1(A[3:0]), .Data2(B[3:0]), .Cin(Cin), .Cout(Cin2), .Sum(Sum[3:0]));
+  add4 add4_2 (.Data1(A[7:4]), .Data2(B[7:4]), .Cin(Cin2), .Cout(Cin3), .Sum(Sum[7:4]));
+  add4 add4_3 (.Data1(A[11:8]), .Data2(B[11:8]), .Cin(Cin3), .Cout(Cin4), .Sum(Sum[11:8]));
+  add4 add4_4 (.Data1(A[15:12]), .Data2(B[15:12]), .Cin(Cin4), .Cout(Cout), .Sum(Sum[15:12]));
+endmodule
+```
+## Loops in VHDL
+There are several different looping constructs in Verilog. Such as `for`, `while`, `repeat`, `forever`.
+### 1. For loop
+```
+//  And scalar g with vector A
+
+Module scalarAnd
+ #(parameter N = 4);
+  (input g,
+   input [N-1:0] a,
+   output [N-1:0] y);
+
+  reg [N-1:0] tmp, y; // To use within the always block.
+
+  integer i;   //loop index, not a signal
+
+  always @(a or g)
+  begin
+    for(i=0; i<N; i=i+1)
+      begin
+        tmp[i] = a[i] & g;
+      end
+    y = tmp;
+  end
+endmodule
+```
+## Generate in Verilog
+Although loops can be used to generate data or test patterns, in Verilog a common use of loops for synthesis is `replication of many identical circuits` within generate blocks.
+
+The `generate  … end generate block` specifies how an object is to be repeated.  Variables used to specify the repetition are called `genvars`.  The index variable of a for loop in a generate block must be a genvar.
+```
+//  Generate n XOR gates
+//   
+module XorGen
+ #(parameter width = 4,delay = 10)
+
+  (output [1:width] xout,
+   input [1:width] xin1, xin2
+  );
+  generate
+    genvar i;
+    for (i=1; i<=width; i=i+1)
+    begin
+      assign #delay // delay is ignored in synthesis but useful for simulation.
+        xout[i] = xin1[i] ^ xin2[i];  // This is not executed sequentially. Instead this generates (width-1) number of xor gates in parallel.
+    end
+  endgenerate    
+endmodule
+
+```
+# Test Benches(test fixture or test harness) in Verilog
+
+<!----
+[1]  D. Smith, “Test Harnesses” in HDL Chip Design, A practical guide for designing, synthesizing and simulating ASICs and FPGAs using VHDL or Verilog, Madison, AL, Doone Publications, 1996, ch. 11, pp. 323-344.  
+
+[2] J. Wawrzynek, (2007, Oct 17).  Verilog Tutorial. [Online]. Available: www-inst.eecs.berkeley.edu/~cs61c/resources/verilog.pdf
+
+[3] J. Lee, “Test Benches and Test Management” in Verilog Quickstart, A Practical Guide to Simulation and Synthesis in Verilog, 3rd ed.  Norwell, MA, Kluwer Academic, 2002, ch. 18, p. 243.
+--->
+Test benches are used to verify the `functional correctness` of the hardware model as coded. A testbench can have several functional sections, including:
+1. Top-level testbench declaration
+2. Stimulus and Response Signal declarations
+3. Component declarations
+4. Component (Device Under Test-DUT) instantiations
+5. External Stimulation Device Models
+6. Test Process which applies the stimulus to the DUT/UUT(Unit under Test)
+7. Test Monitor which reports results
+```
+`timescale 1 ns / 1 ps  // set timescale to nanoseconds, ps precision
+------------------------------------------------------------------
+module Adder_tb();     //  no sensitivity list!
+// signal declarations
+
+reg [3:0] a_tb, b_tb;  // data input stimulus
+reg Cin;               // data input stimulus
+wire [3:0] y_tb;       // data output response
+wire Co_tb;            // data output response
+reg [3:0] expected;    // expected sum result
+-------------------------------------------------------------------
+
+// DUT instantiation       
+add4 DUT(.A(a_tb), .B(b_tb), .Cin(Cin), .Sum(y_tb), .Cout(Co_tb));
+-------------------------------------------------------------------
+
+//Test stimulus generation
+******************* Method 01 - Manual *******************
+initial
+  begin
+    #0 a_tb=2; b_tb=2; Cin=0; expected=4;
+    #10 a_tb=15; b_tb=0; Cin=1; expected=0;
+    #10 a_tb=2; b_tb=4; Cin=1; expected=7;
+    #10 $stop;
+  end
+
+******************* Method 02 - Using loops***************
+integer i, j, k;
+initial
+
+  begin // loop over number of inputs possible
+    for(i = 0; i<16; i = i+1) begin
+      a_tb <= i;
+      for(j=0; j<16; j = j+1) begin
+        b_tb <= j;
+        for (k=0; k<2; k=k+1) begin
+          Cin <= k;
+          #(10);
+
+          /***************** For manual checking *****************/
+
+          expected <= a_tb + b_tb + Cin;  //Expected value corresponding to the generated test case.
+
+          /**************** For self checking ********************/
+
+          if (y_tb !== a_tb + b_tb + Cin) // If the produced output of the code is not equal to the expected output.
+            begin
+              $display(“Error - sum is wrong”);
+              $stop
+            end
+
+        end
+      end
+    end
+  end
+------------------------------------------------------------------  
+
+// Test Results
+initial
+  $monitor("time=%d, a=%b, b=%b, Cin=%b, sum=%b, cout=%b, expected sum=%b", $time, a_tb, b_tb, Cin, y_tb, Co_tb, expected);
+
+endmodule
+```
+### Test Bench with Assertions
+```
+assert_label:
+  assert (y_tb == a_tb + b_tb + Cin)
+    begin
+      $display("Test passed");
+    end
+
+    else
+
+    begin
+      $error("Error - sum is wrong");
+      $stop;
+     end
 
 ```

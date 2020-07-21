@@ -381,7 +381,7 @@ VI. Behavioral Blocks (begin…end)
 VII. Tasks or Functions
 VIII. Timing Specifications
 
-endmodule // No semicolon at the end, like in VHDL
+endmodule // No semicolon at the end.
 ```
 ## Module Instantiation <!--- page 12 introduction to Verilog-->
 * Module declarations(top-level modules) are the templates that are used to create actual objects (instantiations).
@@ -406,12 +406,12 @@ endmodule
 // 4 inputs multiplexer through module instantiation
 module mux4(a, b, c, d, sel, y);
    input [3:0] a, b, c, d;
-   input sel[1:0];
+   input [1:0] sel;
    output [3:0] y;
 
    wire[3:0] low, high; // Connection between the two 2-input multiplexers
 
-   mux2  lowmux(a, b, sel[0], low); // Original_module_name | label | port_list(according to on of the above mentioned methods)
+   mux2  lowmux(a, b, sel[0], low); // Original_module_name | label | port_list(according to one of the above mentioned methods)
    mux2  highmux(c, d, sel[0], high);
    mux2  outmux(low, high, sel[1], y);
 endmodule
